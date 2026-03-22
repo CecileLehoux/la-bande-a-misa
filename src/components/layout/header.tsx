@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useCartStore } from "@/store/cart"
-import { ShoppingBag, User, X, Menu } from "lucide-react"
+import { Search, ShoppingBag, User, X, Menu } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 
@@ -87,6 +87,10 @@ export function Header() {
                   priority
                 />
               </div>
+
+              <Link href="/products" className="hidden md:block p-2 text-[var(--dark)] hover:opacity-60 transition-opacity" aria-label="Rechercher">
+                <Search className="h-5 w-5" />
+              </Link>
 
               {session ? (
                 <div className="relative">
