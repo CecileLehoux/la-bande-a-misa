@@ -132,7 +132,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       const { upload } = await import("@vercel/blob/client")
       const blob = await upload(file.name, file, {
         access: "public",
-        handleUploadUrl: "/api/upload",
+        handleUploadUrl: `${window.location.origin}/api/upload`,
       })
       setImages((prev) => [...prev, { url: blob.url, alt: "" }])
     } catch {
