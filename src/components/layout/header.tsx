@@ -51,8 +51,8 @@ export function Header() {
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
-              {/* Mascotte — accrochée en bas de la barre */}
-              <div className="relative h-14 w-12 self-end">
+              {/* Mascotte — desktop uniquement */}
+              <div className="relative h-14 w-12 self-end hidden md:block">
                 <Image
                   src="/chien.png"
                   alt=""
@@ -77,8 +77,8 @@ export function Header() {
 
             {/* Droite : badge fait main + icônes */}
             <div className="flex items-center gap-1 w-36 justify-end">
-              {/* Badge fait main */}
-              <div className="relative h-11 w-11 mr-1">
+              {/* Badge fait main — desktop uniquement */}
+              <div className="relative h-11 w-11 mr-1 hidden md:block">
                 <Image
                   src="/fait-main.png"
                   alt="Fait main"
