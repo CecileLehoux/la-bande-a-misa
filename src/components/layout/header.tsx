@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useCartStore } from "@/store/cart"
-import { Search, ShoppingBag, User, X, Menu } from "lucide-react"
+import { ShoppingBag, User, X, Menu } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 
@@ -70,7 +70,7 @@ export function Header() {
                 alt="La Bande à Misa"
                 width={220}
                 height={44}
-                className="h-9 w-auto"
+                className="h-auto w-auto max-w-[140px] md:max-w-none md:h-9"
                 priority
               />
             </Link>
@@ -87,10 +87,6 @@ export function Header() {
                   priority
                 />
               </div>
-
-              <Link href="/products" className="p-2 text-[var(--dark)] hover:opacity-60 transition-opacity" aria-label="Rechercher">
-                <Search className="h-5 w-5" />
-              </Link>
 
               {session ? (
                 <div className="relative">
