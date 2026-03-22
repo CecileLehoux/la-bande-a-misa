@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { generateOrderNumber } from "@/lib/utils"
@@ -154,7 +154,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const stripeSession = await stripe.checkout.sessions.create({
+  const stripeSession = await getStripe().checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
     line_items: lineItems,
