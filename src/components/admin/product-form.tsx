@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { slugify } from "@/lib/utils"
 import type { Category, Product, ProductImage } from "@prisma/client"
-import { Trash2, Plus } from "lucide-react"
+import { Trash2, Upload, Loader2 } from "lucide-react"
 
 const productSchema = z.object({
   name: z.string().min(2, "Nom requis"),
@@ -41,6 +41,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     product?.images.map((i) => ({ url: i.url, alt: i.alt ?? "" })) ?? []
   )
   const [imageUrl, setImageUrl] = useState("")
+  const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState("")
@@ -121,6 +122,23 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const form = new FormData()
+    form.append("file", file)
+    const res = await fetch("/api/upload", { method: "POST", body: form })
+    const data = await res.json()
+    if (res.ok) {
+      setImages((prev) => [...prev, { url: data.url, alt: "" }])
+    } else {
+      setError(data.error ?? "Erreur lors de l'upload")
+    }
+    setUploading(false)
+    e.target.value = ""
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -173,35 +191,52 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-gray-900">Images</h2>
-            </div>
+            <h2 className="font-semibold text-gray-900">Images</h2>
+
+            {/* Upload fichier */}
+            <label className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 p-6 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors ${uploading ? "opacity-60 pointer-events-none" : ""}`}>
+              {uploading ? (
+                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              ) : (
+                <Upload className="h-6 w-6 text-gray-400" />
+              )}
+              <span className="text-sm text-gray-500">{uploading ? "Upload en cours…" : "Cliquez pour ajouter une image"}</span>
+              <span className="text-xs text-gray-400">JPG, PNG, WEBP — max 10 Mo</span>
+              <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} disabled={uploading} />
+            </label>
+
+            {/* Ou par URL */}
             <div className="flex gap-2">
               <input
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://exemple.com/image.jpg"
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImage())}
+                placeholder="Ou coller une URL d'image…"
                 className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
               />
-              <Button type="button" onClick={addImage} variant="outline" size="icon">
-                <Plus className="h-4 w-4" />
-              </Button>
+              <button type="button" onClick={addImage} className="rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50 transition-colors">
+                Ajouter
+              </button>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {images.map((img, i) => (
-                <div key={i} className="relative group">
-                  <img src={img.url} alt={img.alt} className="aspect-square w-full rounded-lg object-cover bg-gray-100" />
-                  <button
-                    type="button"
-                    onClick={() => setImages(images.filter((_, j) => j !== i))}
-                    className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+
+            {/* Aperçu */}
+            {images.length > 0 && (
+              <div className="grid grid-cols-3 gap-3">
+                {images.map((img, i) => (
+                  <div key={i} className="relative group">
+                    <img src={img.url} alt={img.alt} className="aspect-square w-full rounded-lg object-cover bg-gray-100" />
+                    <button
+                      type="button"
+                      onClick={() => setImages(images.filter((_, j) => j !== i))}
+                      className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

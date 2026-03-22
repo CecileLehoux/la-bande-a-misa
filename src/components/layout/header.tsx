@@ -25,11 +25,11 @@ export function Header() {
     <>
       {/* Barre unique — fidèle à la maquette */}
       <header className="sticky top-0 z-50 bg-[var(--cream)] border-b border-[var(--beige-dark)]">
-        <div className="relative h-16 overflow-hidden">
+        <div className="relative h-16">
 
           {/* Lignes ondulées SVG en fond */}
           <svg
-            className="pointer-events-none absolute inset-0 w-full h-full"
+            className="pointer-events-none absolute inset-0 w-full h-full overflow-hidden"
             viewBox="0 0 1440 64"
             preserveAspectRatio="none"
             fill="none"

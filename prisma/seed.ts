@@ -13,11 +13,11 @@ async function main() {
   // Admin user
   const adminPassword = await bcrypt.hash("admin123456", 12)
   await prisma.user.upsert({
-    where: { email: "admin@mina.fr" },
+    where: { email: "admin@bam.fr" },
     update: {},
     create: {
-      email: "admin@mina.fr",
-      name: "Mina",
+      email: "admin@bam.fr",
+      name: "Admin",
       password: adminPassword,
       role: "ADMIN",
     },
@@ -80,7 +80,7 @@ async function main() {
   }
 
   console.log("✅ Seed La Bande à Misa terminé !")
-  console.log(`👤 Admin  : admin@mina.fr / admin123456`)
+  console.log(`👤 Admin  : admin@bam.fr / admin123456`)
   console.log(`👤 Client : client@mina.fr / client123456`)
 }
 

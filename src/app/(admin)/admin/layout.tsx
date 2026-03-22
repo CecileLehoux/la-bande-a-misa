@@ -24,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Sidebar */}
       <aside className="w-64 flex-shrink-0 bg-gray-900 text-white flex flex-col">
         <div className="p-6 border-b border-gray-800">
-          <Link href="/" className="font-[family-name:var(--font-playfair)] text-xl font-bold text-white">Mina</Link>
+          <Link href="/" className="font-[family-name:var(--font-playfair)] text-xl font-bold text-white">La Bande à Misa</Link>
           <p className="text-xs text-gray-400 mt-0.5">Administration</p>
         </div>
 
