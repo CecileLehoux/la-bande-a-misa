@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { LayoutDashboard, Package, ShoppingBag, Users, Settings, LogOut, ChevronRight } from "lucide-react"
+import { LayoutDashboard, Package, ShoppingBag, Users, Settings, LogOut, ChevronRight, Tag } from "lucide-react"
 import { signOut } from "@/lib/auth"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -14,6 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const navItems = [
     { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/products", icon: Package, label: "Produits" },
+    { href: "/admin/categories", icon: Tag, label: "Catégories" },
     { href: "/admin/orders", icon: ShoppingBag, label: "Commandes" },
     { href: "/admin/customers", icon: Users, label: "Clients" },
     { href: "/admin/settings", icon: Settings, label: "Paramètres" },
