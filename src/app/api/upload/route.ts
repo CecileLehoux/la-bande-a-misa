@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
     }
 
-    // Production : upload direct client → Vercel Blob (token exchange)
+    // Production : token exchange pour upload direct client → Vercel Blob
     if (process.env.BLOB_READ_WRITE_TOKEN) {
-      const { handleUpload, type: _t } = await import("@vercel/blob") as any
+      const { handleUpload } = await import("@vercel/blob/client")
       const body = await req.json()
       const response = await handleUpload({
         body,
@@ -48,6 +48,6 @@ export async function POST(req: NextRequest) {
 
   } catch (err) {
     console.error("Upload error:", err)
-    return NextResponse.json({ error: "Erreur lors de l'upload" }, { status: 500 })
+    return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
