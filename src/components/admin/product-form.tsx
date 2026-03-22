@@ -128,17 +128,28 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setUploading(true)
     setError("")
     try {
-      const form = new FormData()
-      form.append("file", file)
-      const res = await fetch("/api/upload", { method: "POST", body: form })
-      const data = await res.json()
-      if (res.ok) {
-        setImages((prev) => [...prev, { url: data.url, alt: "" }])
-      } else {
-        setError(data.error ?? "Erreur lors de l'upload")
-      }
+      // PROD : upload direct navigateur → Vercel Blob (contourne la limite 4.5MB)
+      const { upload } = await import("@vercel/blob/client")
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      })
+      setImages((prev) => [...prev, { url: blob.url, alt: "" }])
     } catch {
-      setError("Erreur lors de l'upload")
+      // DEV LOCAL : fallback FormData → public/uploads/
+      try {
+        const form = new FormData()
+        form.append("file", file)
+        const res = await fetch("/api/upload", { method: "POST", body: form })
+        const data = await res.json()
+        if (res.ok) {
+          setImages((prev) => [...prev, { url: data.url, alt: "" }])
+        } else {
+          setError(data.error ?? "Erreur lors de l'upload")
+        }
+      } catch {
+        setError("Erreur lors de l'upload")
+      }
     }
     setUploading(false)
     e.target.value = ""
