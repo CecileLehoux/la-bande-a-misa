@@ -131,7 +131,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       // PROD : upload direct navigateur → Vercel Blob (contourne la limite 4.5MB)
       const { upload } = await import("@vercel/blob/client")
       const blob = await upload(file.name, file, {
-        access: "private",
+        access: "public",
         handleUploadUrl: `${window.location.origin}/api/upload`,
       })
       setImages((prev) => [...prev, { url: blob.url, alt: "" }])
