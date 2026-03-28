@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { slugify } from "@/lib/utils"
@@ -36,5 +37,7 @@ export async function POST(req: Request) {
     },
   })
 
+  revalidatePath("/")
+  revalidatePath("/products")
   return NextResponse.json(product, { status: 201 })
 }
