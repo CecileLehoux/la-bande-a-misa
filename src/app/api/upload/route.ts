@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
         body,
         request: req,
         onBeforeGenerateToken: async () => {
-          // Auth vérifiée uniquement au moment de générer le token
           const session = await auth()
           if (!session || session.user?.role !== "ADMIN") {
             throw new Error("Non autorisé")
@@ -34,11 +33,8 @@ export async function POST(req: NextRequest) {
           return {
             allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
             maximumSizeInBytes: 10 * 1024 * 1024,
-            allowedOrigins: ["*"],
           }
         },
-        // Callback appelé par les serveurs Vercel après upload — pas d'auth
-        onUploadCompleted: async () => {},
       })
       return NextResponse.json(response, { headers: CORS_HEADERS })
     }
