@@ -3,6 +3,16 @@ export const runtime = "nodejs"
 import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS })
+}
+
 export async function POST(req: NextRequest) {
   try {
     const contentType = req.headers.get("content-type") ?? ""
@@ -24,12 +34,13 @@ export async function POST(req: NextRequest) {
           return {
             allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
             maximumSizeInBytes: 10 * 1024 * 1024,
+            allowedOrigins: ["*"],
           }
         },
         // Callback appelé par les serveurs Vercel après upload — pas d'auth
         onUploadCompleted: async () => {},
       })
-      return NextResponse.json(response)
+      return NextResponse.json(response, { headers: CORS_HEADERS })
     }
 
     // ── DEV LOCAL : FormData → public/uploads/ ──
@@ -58,6 +69,6 @@ export async function POST(req: NextRequest) {
 
   } catch (err) {
     console.error("Upload error:", err)
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: CORS_HEADERS })
   }
 }
