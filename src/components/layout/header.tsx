@@ -14,30 +14,31 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: "/products?category=cartes-postales", label: "Cartes postales" },
-    { href: "/products?category=chaussettes", label: "Chaussettes" },
-    { href: "/products?category=bandeaux-cheveux", label: "Bandeaux" },
-    { href: "/products?category=badges", label: "Badges" },
-    { href: "/products", label: "Toute la boutique" },
+    { href: "/products?category=cabas",            label: "Les cabas" },
+    { href: "/products?category=trousses",         label: "Les trousses" },
+    { href: "/products?category=bandanas-canins",  label: "Les bandanas canins" },
+    { href: "/products?category=creations-crochet",label: "Les créations au crochet" },
+    { href: "/products",                            label: "Toute la boutique" },
   ]
 
   return (
     <>
       {/* Barre unique — fidèle à la maquette */}
       <header className="sticky top-0 z-50 bg-[var(--cream)] border-b border-[var(--beige-dark)]">
-        <div className="relative h-16">
+        <div className="relative h-20">
 
-          {/* Lignes ondulées SVG en fond */}
+          {/* Lignes organiques SVG — fidèles à la maquette */}
           <svg
-            className="pointer-events-none absolute inset-0 w-full h-full overflow-hidden"
-            viewBox="0 0 1440 64"
+            className="pointer-events-none absolute inset-0 w-full h-full"
+            viewBox="0 0 1440 80"
             preserveAspectRatio="none"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M0 28 Q180 8 360 28 Q540 48 720 28 Q900 8 1080 28 Q1260 48 1440 28" stroke="#2A2A2A" strokeWidth="0.7" strokeOpacity="0.18" fill="none"/>
-            <path d="M0 38 Q200 18 400 38 Q600 58 800 38 Q1000 18 1200 38 Q1350 52 1440 38" stroke="#2A2A2A" strokeWidth="0.5" strokeOpacity="0.1" fill="none"/>
-            <path d="M0 20 Q300 40 600 20 Q900 0 1200 20 Q1350 32 1440 20" stroke="#2A2A2A" strokeWidth="0.4" strokeOpacity="0.07" fill="none"/>
+            {/* Ligne principale avec petit bouclé */}
+            <path d="M0 64 C70 52 160 28 255 38 C285 43 305 60 318 55 C330 50 338 37 326 30 C314 24 298 30 312 42 C322 51 348 38 430 33 C630 22 950 46 1440 28" stroke="#2a2a1a" strokeWidth="1.1" strokeOpacity="0.22" fill="none"/>
+            {/* Ligne secondaire plus haute */}
+            <path d="M0 46 C130 30 300 54 490 38 C670 23 880 44 1120 30 C1260 23 1370 32 1440 28" stroke="#2a2a1a" strokeWidth="0.65" strokeOpacity="0.13" fill="none"/>
           </svg>
 
           <div className="relative mx-auto max-w-7xl px-4 h-full flex items-center justify-between">
@@ -52,7 +53,7 @@ export function Header() {
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               {/* Mascotte — desktop uniquement */}
-              <div className="relative h-14 w-12 self-end hidden md:block">
+              <div className="relative h-[84px] w-16 self-end hidden md:block">
                 <Image
                   src="/chien.png"
                   alt=""
@@ -78,7 +79,7 @@ export function Header() {
             {/* Droite : badge fait main + icônes */}
             <div className="flex items-center gap-1 w-36 justify-end">
               {/* Badge fait main — desktop uniquement */}
-              <div className="relative h-11 w-11 mr-1 hidden md:block">
+              <div className="relative h-16 w-20 mr-2 hidden md:block">
                 <Image
                   src="/fait-main.png"
                   alt="Fait main"
