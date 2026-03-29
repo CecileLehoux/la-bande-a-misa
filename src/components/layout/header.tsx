@@ -27,19 +27,6 @@ export function Header() {
       <header className="sticky top-0 z-50 bg-[var(--cream)] border-b border-[var(--beige-dark)]">
         <div className="relative h-20">
 
-          {/* Lignes organiques SVG — fidèles à la maquette */}
-          <svg
-            className="pointer-events-none absolute inset-0 w-full h-full"
-            viewBox="0 0 1440 80"
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Ligne principale : part du bas-gauche, monte, fait un ovale, repart à droite */}
-            <path d="M-10 70 C85 54 195 20 278 36 C305 43 318 66 310 58 C302 50 320 26 338 36 C435 50 730 20 1450 34" stroke="#2a2a18" strokeWidth="1.2" strokeOpacity="0.26" fill="none"/>
-            {/* Ligne secondaire : courbe douce sans boucle */}
-            <path d="M-10 50 C150 32 340 58 520 40 C700 22 920 46 1150 30 C1280 22 1390 33 1450 28" stroke="#2a2a18" strokeWidth="0.7" strokeOpacity="0.14" fill="none"/>
-          </svg>
 
           <div className="relative mx-auto max-w-7xl px-4 h-full flex items-center justify-between">
 
