@@ -35,10 +35,10 @@ export function Header() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Ligne principale avec petit bouclé */}
-            <path d="M0 64 C70 52 160 28 255 38 C285 43 305 60 318 55 C330 50 338 37 326 30 C314 24 298 30 312 42 C322 51 348 38 430 33 C630 22 950 46 1440 28" stroke="#2a2a1a" strokeWidth="1.1" strokeOpacity="0.22" fill="none"/>
-            {/* Ligne secondaire plus haute */}
-            <path d="M0 46 C130 30 300 54 490 38 C670 23 880 44 1120 30 C1260 23 1370 32 1440 28" stroke="#2a2a1a" strokeWidth="0.65" strokeOpacity="0.13" fill="none"/>
+            {/* Ligne principale : part du bas-gauche, monte, fait un ovale, repart à droite */}
+            <path d="M-10 70 C85 54 195 20 278 36 C305 43 318 66 310 58 C302 50 320 26 338 36 C435 50 730 20 1450 34" stroke="#2a2a18" strokeWidth="1.2" strokeOpacity="0.26" fill="none"/>
+            {/* Ligne secondaire : courbe douce sans boucle */}
+            <path d="M-10 50 C150 32 340 58 520 40 C700 22 920 46 1150 30 C1280 22 1390 33 1450 28" stroke="#2a2a18" strokeWidth="0.7" strokeOpacity="0.14" fill="none"/>
           </svg>
 
           <div className="relative mx-auto max-w-7xl px-4 h-full flex items-center justify-between">
@@ -79,7 +79,7 @@ export function Header() {
             {/* Droite : badge fait main + icônes */}
             <div className="flex items-center gap-1 w-36 justify-end">
               {/* Badge fait main — desktop uniquement */}
-              <div className="relative h-16 w-20 mr-2 hidden md:block">
+              <div className="relative h-20 w-28 mr-2 hidden md:block">
                 <Image
                   src="/fait-main.png"
                   alt="Fait main"
