@@ -64,9 +64,9 @@ export function Header() {
             </Link>
 
             {/* Droite : badge fait main + icônes */}
-            <div className="flex items-center gap-1 w-36 justify-end">
+            <div className="flex items-center gap-1 w-52 justify-end">
               {/* Badge fait main — desktop uniquement */}
-              <div className="relative h-20 w-28 mr-2 hidden md:block">
+              <div className="relative h-20 w-36 mr-2 hidden md:block">
                 <Image
                   src="/fait-main.png"
                   alt="Fait main"
