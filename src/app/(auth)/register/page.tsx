@@ -56,15 +56,17 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--cream)] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold">E-SHOP</Link>
-          <h1 className="mt-4 text-xl font-semibold text-gray-900">Créer un compte</h1>
-          <p className="mt-1 text-sm text-gray-500">Rejoignez-nous et profitez de vos achats</p>
+          <Link href="/" className="inline-block">
+            <span className="font-[family-name:var(--font-playfair)] text-3xl font-bold text-[var(--dark)]">La Bande à Misa</span>
+          </Link>
+          <h1 className="mt-3 text-lg font-semibold text-[var(--dark)]">Créer un compte</h1>
+          <p className="mt-1 text-sm text-[var(--gray)]">Rejoignez-nous et profitez de vos achats</p>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="rounded-2xl border border-[var(--beige-dark)] bg-white p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input
               label="Nom complet"
@@ -100,14 +102,18 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>
-              Créer mon compte
-            </Button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-full bg-[var(--dark)] py-3 text-sm font-medium text-white hover:bg-[var(--terracotta)] transition-colors disabled:opacity-50"
+            >
+              {isSubmitting ? "Création…" : "Créer mon compte"}
+            </button>
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-gray-500">Déjà un compte ? </span>
-            <Link href="/login" className="font-medium hover:underline">
+            <span className="text-[var(--gray)]">Déjà un compte ? </span>
+            <Link href="/login" className="font-medium text-[var(--terracotta)] hover:underline">
               Se connecter
             </Link>
           </div>
