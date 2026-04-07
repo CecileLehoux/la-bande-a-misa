@@ -15,6 +15,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const { addItem, openCart } = useCartStore()
 
@@ -62,15 +63,19 @@ export default function ProductPage() {
   const prev = () => setSelectedImage((selectedImage - 1 + total) % total)
   const next = () => setSelectedImage((selectedImage + 1) % total)
 
+  const sizes: string[] = product.sizes ? JSON.parse(product.sizes) : []
+
   const handleAddToCart = () => {
+    if (sizes.length > 0 && !selectedSize) return
     addItem({
-      id: crypto.randomUUID(),
+      id: selectedSize ? `${product.id}_${selectedSize}` : product.id,
       productId: product.id,
       name: product.name,
       price: product.price,
       image: product.images[0]?.url ?? null,
       quantity,
       stock: product.stock,
+      size: selectedSize ?? undefined,
     })
     openCart()
   }
@@ -217,6 +222,31 @@ export default function ProductPage() {
                 : "En stock — expédition sous 3-5 jours"}
             </p>
 
+            {/* Sélecteur de taille */}
+            {sizes.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-xs text-[var(--gray)]">Taille</span>
+                <div className="flex flex-wrap gap-2">
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+                        selectedSize === size
+                          ? "border-[var(--dark)] bg-[var(--dark)] text-white"
+                          : "border-[var(--beige-dark)] text-[var(--gray)] hover:border-[var(--dark)] hover:text-[var(--dark)]"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                {!selectedSize && (
+                  <p className="text-[11px] text-[var(--terracotta)]">Veuillez choisir une taille</p>
+                )}
+              </div>
+            )}
+
             {/* Quantité + CTA */}
             {product.stock > 0 && (
               <div className="space-y-3">
@@ -241,7 +271,8 @@ export default function ProductPage() {
 
                 <button
                   onClick={handleAddToCart}
-                  className="w-full rounded-full bg-[var(--dark)] py-3.5 text-sm font-medium text-white hover:bg-[var(--terracotta)] transition-colors duration-200"
+                  disabled={sizes.length > 0 && !selectedSize}
+                  className="w-full rounded-full bg-[var(--dark)] py-3.5 text-sm font-medium text-white hover:bg-[var(--terracotta)] transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[var(--dark)]"
                 >
                   Ajouter au panier
                 </button>

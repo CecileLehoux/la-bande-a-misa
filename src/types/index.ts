@@ -32,6 +32,7 @@ export type CartItem = {
   image: string | null
   quantity: number
   stock: number
+  size?: string
 }
 
 export type OrderStatus =

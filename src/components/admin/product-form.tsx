@@ -45,6 +45,10 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
     product?.categories.map((pc) => pc.categoryId) ?? []
   )
+  const [sizes, setSizes] = useState<string[]>(
+    product?.sizes ? JSON.parse(product.sizes) : []
+  )
+  const [newSize, setNewSize] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -84,7 +88,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setSaving(true)
     setError("")
 
-    const payload = { ...data, images, categoryIds: selectedCategoryIds }
+    const payload = { ...data, images, categoryIds: selectedCategoryIds, sizes: JSON.stringify(sizes) }
 
     const url = product ? `/api/admin/products/${product.id}` : "/api/admin/products"
     const method = product ? "PATCH" : "POST"
@@ -332,6 +336,53 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             {categories.length === 0 && (
               <p className="text-sm text-gray-400 italic">Aucune catégorie disponible</p>
             )}
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-3">
+            <h2 className="font-semibold text-gray-900">Tailles disponibles</h2>
+            <p className="text-xs text-gray-400">Laissez vide si le produit n'a pas de tailles</p>
+            {sizes.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {sizes.map((size) => (
+                  <span key={size} className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">
+                    {size}
+                    <button
+                      type="button"
+                      onClick={() => setSizes(sizes.filter((s) => s !== size))}
+                      className="ml-0.5 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newSize}
+                onChange={(e) => setNewSize(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    const v = newSize.trim()
+                    if (v && !sizes.includes(v)) { setSizes([...sizes, v]); setNewSize("") }
+                  }
+                }}
+                placeholder="ex: XS 18cm, Adulte…"
+                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const v = newSize.trim()
+                  if (v && !sizes.includes(v)) { setSizes([...sizes, v]); setNewSize("") }
+                }}
+                className="rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
+              >
+                +
+              </button>
+            </div>
           </div>
 
           <div className="space-y-3">

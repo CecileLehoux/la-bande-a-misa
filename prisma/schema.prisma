@@ -98,6 +98,7 @@ model Product {
   stock        Int      @default(0)
   lowStockAt   Int      @default(5)
   weight       Float?
+  sizes        String?
   isActive     Boolean  @default(true)
   isFeatured   Boolean  @default(false)
   categoryId   String?
@@ -198,6 +199,7 @@ model OrderItem {
   productId String
   name      String
   image     String?
+  size      String?
   price     Float
   quantity  Int
   total     Float

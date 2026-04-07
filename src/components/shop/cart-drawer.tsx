@@ -47,7 +47,7 @@ export function CartDrawer() {
           ) : (
             <ul className="space-y-5">
               {items.map((item) => (
-                <li key={item.productId} className="flex gap-3">
+                <li key={item.id} className="flex gap-3">
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-[var(--beige)]">
                     {item.image ? (
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
@@ -62,25 +62,30 @@ export function CartDrawer() {
                     <div className="flex justify-between gap-2">
                       <p className="text-sm text-[var(--dark)] line-clamp-2 leading-snug">{item.name}</p>
                       <button
-                        onClick={() => removeItem(item.productId)}
+                        onClick={() => removeItem(item.id)}
                         className="text-[var(--gray-light)] hover:text-red-500 transition-colors flex-shrink-0"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
 
+                    {item.size && (
+                      <p className="text-xs text-[var(--gray)] bg-[var(--beige)] px-2 py-0.5 rounded-full w-fit">
+                        {item.size}
+                      </p>
+                    )}
                     <p className="text-sm font-medium text-[var(--dark)]">{formatPrice(item.price)}</p>
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="h-6 w-6 rounded-full border border-[var(--beige-dark)] text-[var(--gray)] hover:border-[var(--terracotta)] hover:text-[var(--terracotta)] transition-colors text-sm flex items-center justify-center"
                       >
                         −
                       </button>
                       <span className="w-5 text-center text-sm text-[var(--dark)]">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         disabled={item.quantity >= item.stock}
                         className="h-6 w-6 rounded-full border border-[var(--beige-dark)] text-[var(--gray)] hover:border-[var(--terracotta)] hover:text-[var(--terracotta)] transition-colors text-sm flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                       >
