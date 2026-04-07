@@ -23,7 +23,7 @@ export default function AtelierPage() {
               src="/latelier/IMG_8548.JPG"
               alt="L'atelier La Bande à Misa"
               fill
-              className="object-cover object-center"
+              className="object-cover object-top"
               priority
             />
           </div>
