@@ -56,7 +56,7 @@ export default async function HomePage() {
                 Tout voir <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
               {newProducts.map((product, index) => (
                 <div key={product.id} className={index >= 6 ? "hidden sm:block" : ""}>
                   <ProductCard product={product} />
@@ -77,7 +77,7 @@ export default async function HomePage() {
                 Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
               {featuredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
