@@ -22,16 +22,17 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero — banner pleine largeur, aucun texte par-dessus */}
+      {/* Hero — banner pleine largeur, hauteur limitée */}
       <section className="w-full overflow-hidden bg-[var(--beige)]">
-        <Image
-          src="/banner.png"
-          alt="La Bande à Misa"
-          width={1600}
-          height={600}
-          className="w-full h-auto object-cover"
-          priority
-        />
+        <div className="relative w-full h-[30vh] max-h-[280px] min-h-[160px]">
+          <Image
+            src="/banner.png"
+            alt="La Bande à Misa"
+            fill
+            className="object-cover object-top"
+            priority
+          />
+        </div>
       </section>
 
       {/* Bandeau défilant */}
