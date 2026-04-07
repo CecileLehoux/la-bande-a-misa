@@ -37,10 +37,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       categories: categoryIds !== undefined
         ? {
             deleteMany: {},
-            createMany: {
-              data: (categoryIds as string[]).map((cid) => ({ categoryId: cid })),
-              skipDuplicates: true,
-            },
+            create: (categoryIds as string[]).map((cid) => ({ categoryId: cid })),
           }
         : undefined,
     },

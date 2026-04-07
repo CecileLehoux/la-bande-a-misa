@@ -25,7 +25,6 @@ const productSchema = z.object({
   weight: z.coerce.number().optional(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
-  categoryIds: z.array(z.string()).default([]),
 })
 
 type ProductFormData = z.output<typeof productSchema>
@@ -42,6 +41,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       .slice()
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((i) => ({ url: i.url, alt: i.alt ?? "" })) ?? []
+  )
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
+    product?.categories.map((pc) => pc.categoryId) ?? []
   )
   const [imageUrl, setImageUrl] = useState("")
   const [uploading, setUploading] = useState(false)
@@ -73,7 +75,6 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       weight: product?.weight ?? undefined,
       isActive: product?.isActive ?? true,
       isFeatured: product?.isFeatured ?? false,
-      categoryIds: product?.categories.map((pc) => pc.categoryId) ?? [],
     },
   })
 
@@ -83,7 +84,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setSaving(true)
     setError("")
 
-    const payload = { ...data, images }
+    const payload = { ...data, images, categoryIds: selectedCategoryIds }
 
     const url = product ? `/api/admin/products/${product.id}` : "/api/admin/products"
     const method = product ? "PATCH" : "POST"
@@ -312,28 +313,22 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-3">
             <h2 className="font-semibold text-gray-900">Catégories</h2>
             <p className="text-xs text-gray-400">Un produit peut appartenir à plusieurs catégories</p>
-            {categories.map((cat) => {
-              const checked = watch("categoryIds")?.includes(cat.id) ?? false
-              return (
-                <label key={cat.id} className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300"
-                    checked={checked}
-                    onChange={(e) => {
-                      const current = watch("categoryIds") ?? []
-                      setValue(
-                        "categoryIds",
-                        e.target.checked
-                          ? [...current, cat.id]
-                          : current.filter((id) => id !== cat.id)
-                      )
-                    }}
-                  />
-                  <span className="text-sm text-gray-700">{cat.name}</span>
-                </label>
-              )
-            })}
+            {categories.map((cat) => (
+              <label key={cat.id} className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300"
+                  checked={selectedCategoryIds.includes(cat.id)}
+                  onChange={(e) => {
+                    setSelectedCategoryIds(e.target.checked
+                      ? [...selectedCategoryIds, cat.id]
+                      : selectedCategoryIds.filter((id) => id !== cat.id)
+                    )
+                  }}
+                />
+                <span className="text-sm text-gray-700">{cat.name}</span>
+              </label>
+            ))}
             {categories.length === 0 && (
               <p className="text-sm text-gray-400 italic">Aucune catégorie disponible</p>
             )}

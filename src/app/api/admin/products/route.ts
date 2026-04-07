@@ -34,10 +34,7 @@ export async function POST(req: Request) {
         })) ?? [],
       },
       categories: {
-        createMany: {
-          data: (categoryIds as string[] ?? []).map((id) => ({ categoryId: id })),
-          skipDuplicates: true,
-        },
+        create: (categoryIds as string[] ?? []).map((id) => ({ categoryId: id })),
       },
     },
   })
