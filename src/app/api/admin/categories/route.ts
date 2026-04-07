@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { slugify } from "@/lib/utils"
+import { revalidatePath } from "next/cache"
 
 export async function GET() {
   const session = await auth()
@@ -38,6 +39,10 @@ export async function POST(req: NextRequest) {
   const category = await prisma.category.create({
     data: { name: name.trim(), slug, description: description?.trim() ?? null },
   })
+
+  revalidatePath("/")
+  revalidatePath("/products")
+  revalidatePath("/admin/categories")
 
   return NextResponse.json(category, { status: 201 })
 }

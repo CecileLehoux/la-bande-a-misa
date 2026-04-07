@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { slugify } from "@/lib/utils"
+import { revalidatePath } from "next/cache"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -19,6 +20,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     where: { id },
     data: { name: name.trim(), slug: slugify(name.trim()), description: description?.trim() ?? null },
   })
+
+  revalidatePath("/")
+  revalidatePath("/products")
+  revalidatePath("/admin/categories")
 
   return NextResponse.json(category)
 }
@@ -40,5 +45,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   }
 
   await prisma.category.delete({ where: { id } })
+
+  revalidatePath("/")
+  revalidatePath("/products")
+  revalidatePath("/admin/categories")
+
   return new NextResponse(null, { status: 204 })
 }

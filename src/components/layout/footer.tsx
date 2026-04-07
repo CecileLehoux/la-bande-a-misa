@@ -24,9 +24,9 @@ export function Footer() {
           <div>
             <h3 className="text-xs tracking-widest uppercase text-[var(--dark)] mb-5">La boutique</h3>
             <ul className="space-y-3">
-              <li><Link href="/products?category=accessoires-humains" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires humains</Link></li>
-              <li><Link href="/products?category=accessoires-chiens-chats" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires chiens et chats</Link></li>
-              <li><Link href="/latelier" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">L'atelier</Link></li>
+              <li><Link href="/products?category=linge-de-maison" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Linge de maison</Link></li>
+              <li><Link href="/products?category=bebe-enfant" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Bébé &amp; Enfant</Link></li>
+              <li><Link href="/products?category=accessoires" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires</Link></li>
               <li><Link href="/products" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Toute la collection</Link></li>
             </ul>
           </div>
@@ -45,8 +45,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li><Link href="/a-propos" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">À propos</Link></li>
               <li><Link href="/contact" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Contact</Link></li>
-              <li><Link href="/livraison" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Livraison & délais</Link></li>
-              <li><Link href="/retours" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Retours & échanges</Link></li>
+              <li><Link href="/livraison" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Livraison &amp; retours</Link></li>
             </ul>
           </div>
 

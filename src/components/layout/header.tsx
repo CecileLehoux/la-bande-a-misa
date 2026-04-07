@@ -23,15 +23,12 @@ export function Header() {
 
   return (
     <>
-      {/* Barre unique — fidèle à la maquette */}
       <header className="sticky top-0 z-50 bg-[var(--cream)] border-b border-[var(--beige-dark)]">
         <div className="relative h-20">
-
-
           <div className="relative mx-auto max-w-7xl px-4 h-full flex items-center justify-between">
 
-            {/* Gauche : hamburger + mascotte */}
-            <div className="flex items-end gap-2 w-36">
+            {/* Gauche : hamburger (mobile) */}
+            <div className="flex items-center w-36">
               <button
                 className="md:hidden p-1 text-[var(--dark)] hover:opacity-60 transition-opacity"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -39,20 +36,10 @@ export function Header() {
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
-              {/* Mascotte — desktop uniquement */}
-              <div className="relative h-[84px] w-16 self-end hidden md:block">
-                <Image
-                  src="/chien.png"
-                  alt=""
-                  fill
-                  className="object-contain object-bottom"
-                  priority
-                />
-              </div>
             </div>
 
-            {/* Centre : logo */}
-            <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+            {/* Centre : logo + tagline */}
+            <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5">
               <Image
                 src="/logo.png"
                 alt="La Bande à Misa"
@@ -61,22 +48,18 @@ export function Header() {
                 className="h-auto w-auto max-w-[140px] md:max-w-none md:h-9"
                 priority
               />
+              <span className="text-[8px] tracking-[0.18em] uppercase text-[var(--gray)] hidden md:block">
+                Créations cousues main
+              </span>
             </Link>
 
-            {/* Droite : badge fait main + icônes */}
-            <div className="flex items-center gap-1 w-52 justify-end">
-              {/* Badge fait main — desktop uniquement */}
-              <div className="relative h-20 w-36 mr-2 hidden md:block">
-                <Image
-                  src="/fait-main.png"
-                  alt="Fait main"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
-
-              <Link href="/products" className="hidden md:block p-2 text-[var(--dark)] hover:opacity-60 transition-opacity" aria-label="Rechercher">
+            {/* Droite : icônes */}
+            <div className="flex items-center gap-1 w-36 justify-end">
+              <Link
+                href="/products"
+                className="hidden md:block p-2 text-[var(--dark)] hover:opacity-60 transition-opacity"
+                aria-label="Rechercher"
+              >
                 <Search className="h-5 w-5" />
               </Link>
 
@@ -95,11 +78,19 @@ export function Header() {
                         <p className="text-xs text-[var(--gray)]">Bonjour,</p>
                         <p className="text-sm text-[var(--dark)] truncate">{session.user?.email}</p>
                       </div>
-                      <Link href="/account/orders" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[var(--gray)] hover:bg-[var(--beige)] hover:text-[var(--dark)] transition-colors">
+                      <Link
+                        href="/account/orders"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block px-4 py-2.5 text-sm text-[var(--gray)] hover:bg-[var(--beige)] hover:text-[var(--dark)] transition-colors"
+                      >
                         Mes commandes
                       </Link>
                       {session.user?.role === "ADMIN" && (
-                        <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm font-medium text-[var(--terracotta)] hover:bg-[var(--beige)] transition-colors">
+                        <Link
+                          href="/admin/dashboard"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="block px-4 py-2.5 text-sm font-medium text-[var(--terracotta)] hover:bg-[var(--beige)] transition-colors"
+                        >
                           Administration
                         </Link>
                       )}

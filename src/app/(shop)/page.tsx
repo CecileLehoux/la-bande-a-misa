@@ -36,10 +36,10 @@ export default async function HomePage() {
 
       {/* Bandeau défilant */}
       <div className="border-y border-[var(--beige-dark)] bg-[var(--cream)] py-2.5 overflow-hidden">
-        <div className="flex items-center gap-12 whitespace-nowrap">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="text-[11px] tracking-widest uppercase text-[var(--gray)]">
-              ✦ Tout cousu main &nbsp;&nbsp; ✦ Matières naturelles &nbsp;&nbsp; ✦ Livraison soignée &nbsp;&nbsp; ✦ Personnalisation possible
+        <div className="flex items-center whitespace-nowrap animate-marquee">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className="text-[11px] tracking-widest uppercase text-[var(--gray)] px-8">
+              Tout cousu main ✦ Livraison soignée ✦ Cartes cadeaux ✦
             </span>
           ))}
         </div>
