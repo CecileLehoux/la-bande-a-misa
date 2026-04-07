@@ -43,7 +43,7 @@ export function Footer() {
           <div>
             <h3 className="text-xs tracking-widest uppercase text-[var(--dark)] mb-5">Informations</h3>
             <ul className="space-y-3">
-              <li><Link href="/a-propos" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">À propos</Link></li>
+              <li><Link href="/latelier" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">L'atelier</Link></li>
               <li><Link href="/contact" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Contact</Link></li>
               <li><Link href="/livraison" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Livraison &amp; retours</Link></li>
             </ul>
