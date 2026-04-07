@@ -23,7 +23,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const orderBy: Record<string, string> =
     params.sort === "price_asc" ? { price: "asc" }
     : params.sort === "price_desc" ? { price: "desc" }
-    : { createdAt: "desc" }
+    : { sortOrder: "asc" }
 
   const [products, total, categories] = await Promise.all([
     prisma.product.findMany({

@@ -10,13 +10,13 @@ export default async function HomePage() {
       where: { isActive: true, isFeatured: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
       take: 8,
-      orderBy: { createdAt: "desc" },
+      orderBy: { sortOrder: "asc" },
     }),
     prisma.product.findMany({
       where: { isActive: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
       take: 8,
-      orderBy: { createdAt: "desc" },
+      orderBy: { sortOrder: "asc" },
     }),
   ])
 

@@ -99,6 +99,7 @@ model Product {
   lowStockAt   Int      @default(5)
   weight       Float?
   sizes        String?
+  sortOrder    Int      @default(0)
   isActive     Boolean  @default(true)
   isFeatured   Boolean  @default(false)
   categoryId   String?
