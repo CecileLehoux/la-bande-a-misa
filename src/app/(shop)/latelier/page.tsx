@@ -18,12 +18,12 @@ export default function AtelierPage() {
 
         {/* Photo + texte */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-14 items-center">
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--beige)]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--beige)]">
             <Image
               src="/latelier/IMG_8548.JPG"
               alt="L'atelier La Bande à Misa"
               fill
-              className="object-cover"
+              className="object-cover object-center"
               priority
             />
           </div>
