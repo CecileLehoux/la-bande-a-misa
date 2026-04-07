@@ -14,11 +14,11 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: "/products?category=cabas",            label: "Les cabas" },
-    { href: "/products?category=trousses",         label: "Les trousses" },
-    { href: "/products?category=bandanas-canins",  label: "Les bandanas canins" },
-    { href: "/products?category=creations-crochet",label: "Les créations au crochet" },
-    { href: "/products",                            label: "Toute la boutique" },
+    { href: "/products?category=accessoires-humains",      label: "Accessoires humains" },
+    { href: "/products?category=accessoires-chiens-chats", label: "Accessoires chiens et chats" },
+    { href: "/latelier",                                    label: "L'atelier" },
+    { href: "/contact",                                     label: "Contact" },
+    { href: "/products",                                    label: "Toute la boutique" },
   ]
 
   return (

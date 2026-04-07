@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed-real": "tsx prisma/seed-real-products.ts",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev"
   },

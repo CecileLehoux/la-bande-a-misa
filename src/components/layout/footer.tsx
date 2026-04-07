@@ -24,10 +24,9 @@ export function Footer() {
           <div>
             <h3 className="text-xs tracking-widest uppercase text-[var(--dark)] mb-5">La boutique</h3>
             <ul className="space-y-3">
-              <li><Link href="/products?category=cabas" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Les cabas</Link></li>
-              <li><Link href="/products?category=trousses" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Les trousses</Link></li>
-              <li><Link href="/products?category=bandanas-canins" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Les bandanas canins</Link></li>
-              <li><Link href="/products?category=creations-crochet" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Les créations au crochet</Link></li>
+              <li><Link href="/products?category=accessoires-humains" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires humains</Link></li>
+              <li><Link href="/products?category=accessoires-chiens-chats" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires chiens et chats</Link></li>
+              <li><Link href="/latelier" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">L'atelier</Link></li>
               <li><Link href="/products" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Toute la collection</Link></li>
             </ul>
           </div>

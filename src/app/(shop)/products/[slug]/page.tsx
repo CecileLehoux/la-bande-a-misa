@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import { ShoppingBag, ChevronLeft } from "lucide-react"
+import { ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react"
 import { formatPrice, calculateDiscount } from "@/lib/utils"
 import { useCartStore } from "@/store/cart"
 import Link from "next/link"
@@ -15,6 +15,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const { addItem, openCart } = useCartStore()
 
   useEffect(() => {
@@ -56,6 +57,10 @@ export default function ProductPage() {
 
   const discount = calculateDiscount(product.price, product.comparePrice ?? 0)
   const mainImage = product.images[selectedImage]?.url
+  const total = product.images.length
+
+  const prev = () => setSelectedImage((selectedImage - 1 + total) % total)
+  const next = () => setSelectedImage((selectedImage + 1) % total)
 
   const handleAddToCart = () => {
     addItem({
@@ -84,9 +89,19 @@ export default function ProductPage() {
         </Link>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-          {/* Images */}
+          {/* Carousel images */}
           <div className="space-y-3">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--beige)]">
+            {/* Image principale */}
+            <div
+              className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--beige)]"
+              onTouchStart={(e) => setTouchStartX(e.touches[0].clientX)}
+              onTouchEnd={(e) => {
+                if (touchStartX === null || total <= 1) return
+                const delta = touchStartX - e.changedTouches[0].clientX
+                if (Math.abs(delta) > 40) delta > 0 ? next() : prev()
+                setTouchStartX(null)
+              }}
+            >
               {mainImage ? (
                 <Image
                   src={mainImage}
@@ -100,16 +115,55 @@ export default function ProductPage() {
                   <ShoppingBag className="h-16 w-16 text-[var(--beige-dark)]" />
                 </div>
               )}
+
+              {/* Flèches prev/next */}
+              {total > 1 && (
+                <>
+                  <button
+                    onClick={prev}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-sm transition-colors"
+                    aria-label="Image précédente"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-[var(--dark)]" />
+                  </button>
+                  <button
+                    onClick={next}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-sm transition-colors"
+                    aria-label="Image suivante"
+                  >
+                    <ChevronRight className="h-5 w-5 text-[var(--dark)]" />
+                  </button>
+                </>
+              )}
+
+              {/* Dots indicateurs */}
+              {total > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {product.images.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImage(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === selectedImage ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                      }`}
+                      aria-label={`Image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {product.images.length > 1 && (
-              <div className="flex gap-2">
+            {/* Thumbnails */}
+            {total > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 {product.images.map((img, i) => (
                   <button
                     key={img.id}
                     onClick={() => setSelectedImage(i)}
-                    className={`relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg transition-opacity ${
-                      selectedImage === i ? "opacity-100 ring-1 ring-[var(--terracotta)]" : "opacity-50 hover:opacity-80"
+                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg transition-opacity ${
+                      selectedImage === i
+                        ? "opacity-100 ring-2 ring-[var(--terracotta)]"
+                        : "opacity-50 hover:opacity-80"
                     }`}
                   >
                     <Image src={img.url} alt={img.alt ?? ""} fill className="object-cover" />
