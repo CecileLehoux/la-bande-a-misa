@@ -24,7 +24,7 @@ export default async function HomePage() {
     <div>
       {/* Hero — banner pleine largeur, hauteur limitée */}
       <section className="w-full overflow-hidden bg-[var(--beige)]">
-        <div className="relative w-full h-[55vh] max-h-[560px] min-h-[300px]">
+        <div className="relative w-full h-[70vh] max-h-[700px] min-h-[400px]">
           <Image
             src="/banner.png"
             alt="La Bande à Misa"
