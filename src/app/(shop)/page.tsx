@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export default async function HomePage() {
-  const [featuredProducts, newProducts] = await Promise.all([
+  const [/* featuredProducts */ , newProducts] = await Promise.all([
     prisma.product.findMany({
       where: { isActive: true, isFeatured: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
@@ -15,7 +15,7 @@ export default async function HomePage() {
     prisma.product.findMany({
       where: { isActive: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
-      take: 4,
+      take: 8,
       orderBy: { createdAt: "desc" },
     }),
   ])
@@ -46,14 +46,12 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Coups de cœur */}
-      {featuredProducts.length > 0 && (
+      {/* Coups de cœur — masqué pour l'instant */}
+      {/* {featuredProducts.length > 0 && (
         <section className="py-14 bg-[var(--cream)]">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8 border-b border-[var(--beige-dark)] pb-4">
-              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">
-                Coups de cœur
-              </h2>
+              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">Coups de cœur</h2>
               <Link href="/products?featured=true" className="flex items-center gap-1 text-[11px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity">
                 Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
@@ -65,7 +63,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Séparateur visuel */}
       <div className="bg-[var(--beige)] py-16">
@@ -101,8 +99,10 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-              {newProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {newProducts.map((product, index) => (
+                <div key={product.id} className={index >= 6 ? "hidden sm:block" : ""}>
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
           </div>
