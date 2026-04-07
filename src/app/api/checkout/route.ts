@@ -7,6 +7,8 @@ import type { CartItem } from "@/types"
 
 export async function POST(req: Request) {
   const session = await auth()
+  const origin = req.headers.get("origin") ?? req.headers.get("referer")?.split("/").slice(0, 3).join("/") ?? ""
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || origin
   const body = await req.json()
   const { items, shippingAddress, email } = body as {
     items: CartItem[]
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const shippingCost = subtotal >= 50 ? 0 : 4.99
+  const shippingCost = 4.99
   const total = subtotal + shippingCost
   const orderNumber = generateOrderNumber()
 
@@ -111,6 +113,7 @@ export async function POST(req: Request) {
             productId: item.productId,
             name: product.name,
             image: item.image,
+            size: item.size ?? null,
             price: product.price,
             quantity: item.quantity,
             total: product.price * item.quantity,
@@ -147,7 +150,6 @@ export async function POST(req: Request) {
         data: { stock: { decrement: item.quantity } },
       })
     }
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3002"
     return NextResponse.json({
       mockOrder: true,
       sessionUrl: `${appUrl}/checkout/success?orderId=${order.id}&orderNumber=${orderNumber}`,
@@ -163,8 +165,8 @@ export async function POST(req: Request) {
       orderId: order.id,
       orderNumber,
     },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
+    success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${appUrl}/checkout/cancel`,
     billing_address_collection: "auto",
   })
 
