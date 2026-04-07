@@ -29,7 +29,7 @@ export default async function HomePage() {
             src="/banner.png"
             alt="La Bande à Misa"
             fill
-            className="object-cover object-top"
+            className="object-cover object-bottom"
             priority
           />
         </div>
