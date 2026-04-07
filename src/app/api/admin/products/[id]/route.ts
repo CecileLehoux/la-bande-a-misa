@@ -15,13 +15,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params
   const body = await req.json()
-  const { images, ...data } = body
+  const { images, categoryIds, categoryId: _legacy, ...data } = body
 
   const product = await prisma.product.update({
     where: { id },
     data: {
       ...data,
-      categoryId: data.categoryId || null,
       comparePrice: data.comparePrice || null,
       cost: data.cost || null,
       weight: data.weight || null,
@@ -33,6 +32,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
               alt: img.alt,
               sortOrder: i,
             })),
+          }
+        : undefined,
+      categories: categoryIds !== undefined
+        ? {
+            deleteMany: {},
+            createMany: {
+              data: (categoryIds as string[]).map((cid) => ({ categoryId: cid })),
+              skipDuplicates: true,
+            },
           }
         : undefined,
     },

@@ -2,7 +2,7 @@ import type { Product, Category, Order, OrderItem, User, ProductImage } from "@p
 
 export type ProductWithImages = Product & {
   images: ProductImage[]
-  category: Category | null
+  categories: { category: Category }[]
   _count?: { reviews: number }
 }
 

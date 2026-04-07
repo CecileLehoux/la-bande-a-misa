@@ -277,13 +277,16 @@ async function main() {
   ]
 
   console.log("🌱 Création des produits...")
-  for (const { images, ...data } of products) {
+  for (const { images, categoryId, ...data } of products) {
     await prisma.product.create({
       data: {
         ...data,
         isActive: true,
         images: {
           create: images.map((url, i) => ({ url, alt: data.name, sortOrder: i })),
+        },
+        categories: {
+          create: [{ categoryId }],
         },
       },
     })

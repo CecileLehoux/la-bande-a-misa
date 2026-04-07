@@ -11,7 +11,7 @@ export async function GET(
     where: { slug, isActive: true },
     include: {
       images: { orderBy: { sortOrder: "asc" } },
-      category: true,
+      categories: { include: { category: true } },
       reviews: {
         where: { isApproved: true },
         include: { user: { select: { name: true } } },

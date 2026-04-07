@@ -13,7 +13,7 @@ export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
     include: {
       images: { take: 1, orderBy: { sortOrder: "asc" } },
-      category: true,
+      categories: { include: { category: true } },
       _count: { select: { orderItems: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -75,7 +75,9 @@ export default async function AdminProductsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {product.category?.name ?? "—"}
+                  {product.categories.length > 0
+                    ? product.categories.map(pc => pc.category.name).join(", ")
+                    : "—"}
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-medium">{formatPrice(product.price)}</p>

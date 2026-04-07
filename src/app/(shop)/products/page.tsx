@@ -18,7 +18,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const skip = (page - 1) * limit
 
   const where: Record<string, unknown> = { isActive: true }
-  if (params.category) where.category = { slug: params.category }
+  if (params.category) where.categories = { some: { category: { slug: params.category } } }
 
   const orderBy: Record<string, string> =
     params.sort === "price_asc" ? { price: "asc" }
@@ -28,7 +28,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const [products, total, categories] = await Promise.all([
     prisma.product.findMany({
       where,
-      include: { images: { orderBy: { sortOrder: "asc" } }, category: true },
+      include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
       orderBy,
       skip,
       take: limit,

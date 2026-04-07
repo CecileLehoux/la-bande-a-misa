@@ -17,13 +17,12 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 403 })
 
   const body = await req.json()
-  const { images, ...data } = body
+  const { images, categoryIds, categoryId: _legacy, ...data } = body
 
   const product = await prisma.product.create({
     data: {
       ...data,
       slug: data.slug || slugify(data.name),
-      categoryId: data.categoryId || null,
       comparePrice: data.comparePrice || null,
       cost: data.cost || null,
       weight: data.weight || null,
@@ -33,6 +32,12 @@ export async function POST(req: Request) {
           alt: img.alt,
           sortOrder: i,
         })) ?? [],
+      },
+      categories: {
+        createMany: {
+          data: (categoryIds as string[] ?? []).map((id) => ({ categoryId: id })),
+          skipDuplicates: true,
+        },
       },
     },
   })

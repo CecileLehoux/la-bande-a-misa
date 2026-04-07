@@ -177,9 +177,9 @@ export default function ProductPage() {
           <div className="flex flex-col justify-center space-y-6">
             {/* Catégorie + titre */}
             <div>
-              {product.category && (
+              {product.categories.length > 0 && (
                 <p className="mb-2 text-[11px] tracking-widest text-[var(--terracotta)] uppercase">
-                  {product.category.name}
+                  {product.categories.map(pc => pc.category.name).join(" · ")}
                 </p>
               )}
               <h1 className="font-[family-name:var(--font-playfair)] text-3xl font-bold text-[var(--dark)] leading-tight">

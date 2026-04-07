@@ -8,7 +8,7 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { slugify } from "@/lib/utils"
-import type { Category, Product, ProductImage } from "@prisma/client"
+import type { Category, Product, ProductImage, ProductCategory } from "@prisma/client"
 import { Trash2, Upload, Loader2, GripVertical } from "lucide-react"
 
 const productSchema = z.object({
@@ -25,13 +25,13 @@ const productSchema = z.object({
   weight: z.coerce.number().optional(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
-  categoryId: z.string().optional(),
+  categoryIds: z.array(z.string()).default([]),
 })
 
 type ProductFormData = z.output<typeof productSchema>
 
 interface ProductFormProps {
-  product?: Product & { images: ProductImage[] }
+  product?: Product & { images: ProductImage[]; categories: ProductCategory[] }
   categories: Category[]
 }
 
@@ -73,7 +73,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       weight: product?.weight ?? undefined,
       isActive: product?.isActive ?? true,
       isFeatured: product?.isFeatured ?? false,
-      categoryId: product?.categoryId ?? "",
+      categoryIds: product?.categories.map((pc) => pc.categoryId) ?? [],
     },
   })
 
@@ -309,17 +309,34 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             </label>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-            <h2 className="font-semibold text-gray-900">Catégorie</h2>
-            <select
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-              {...register("categoryId")}
-            >
-              <option value="">Aucune catégorie</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
+          <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-3">
+            <h2 className="font-semibold text-gray-900">Catégories</h2>
+            <p className="text-xs text-gray-400">Un produit peut appartenir à plusieurs catégories</p>
+            {categories.map((cat) => {
+              const checked = watch("categoryIds")?.includes(cat.id) ?? false
+              return (
+                <label key={cat.id} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked={checked}
+                    onChange={(e) => {
+                      const current = watch("categoryIds") ?? []
+                      setValue(
+                        "categoryIds",
+                        e.target.checked
+                          ? [...current, cat.id]
+                          : current.filter((id) => id !== cat.id)
+                      )
+                    }}
+                  />
+                  <span className="text-sm text-gray-700">{cat.name}</span>
+                </label>
+              )
+            })}
+            {categories.length === 0 && (
+              <p className="text-sm text-gray-400 italic">Aucune catégorie disponible</p>
+            )}
           </div>
 
           <div className="space-y-3">
