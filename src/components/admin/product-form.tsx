@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { slugify } from "@/lib/utils"
 import type { Category, Product, ProductImage } from "@prisma/client"
-import { Trash2, Upload, Loader2 } from "lucide-react"
+import { Trash2, Upload, Loader2, GripVertical } from "lucide-react"
 
 const productSchema = z.object({
   name: z.string().min(2, "Nom requis"),
@@ -38,13 +38,18 @@ interface ProductFormProps {
 export function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter()
   const [images, setImages] = useState<{ url: string; alt: string }[]>(
-    product?.images.map((i) => ({ url: i.url, alt: i.alt ?? "" })) ?? []
+    product?.images
+      .slice()
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((i) => ({ url: i.url, alt: i.alt ?? "" })) ?? []
   )
   const [imageUrl, setImageUrl] = useState("")
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState("")
+  const dragIndex = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
   const {
     register,
@@ -236,12 +241,43 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               </button>
             </div>
 
-            {/* Aperçu */}
+            {/* Aperçu — drag & drop pour réordonner */}
             {images.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
                 {images.map((img, i) => (
-                  <div key={i} className="relative group">
+                  <div
+                    key={img.url + i}
+                    draggable
+                    onDragStart={() => { dragIndex.current = i }}
+                    onDragOver={(e) => { e.preventDefault(); setDragOverIndex(i) }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      const from = dragIndex.current
+                      if (from === null || from === i) { setDragOverIndex(null); return }
+                      const next = [...images]
+                      const [moved] = next.splice(from, 1)
+                      next.splice(i, 0, moved)
+                      setImages(next)
+                      dragIndex.current = null
+                      setDragOverIndex(null)
+                    }}
+                    onDragEnd={() => { dragIndex.current = null; setDragOverIndex(null) }}
+                    className={`relative group cursor-grab active:cursor-grabbing rounded-lg transition-all ${
+                      dragOverIndex === i ? "ring-2 ring-blue-400 scale-105" : ""
+                    }`}
+                  >
+                    {/* Badge "1ère photo" */}
+                    {i === 0 && (
+                      <span className="absolute top-1 left-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white font-medium">
+                        Principale
+                      </span>
+                    )}
                     <img src={img.url} alt={img.alt} className="aspect-square w-full rounded-lg object-cover bg-gray-100" />
+                    {/* Poignée drag */}
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/40 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      <GripVertical className="h-3 w-3 text-white" />
+                    </div>
+                    {/* Supprimer */}
                     <button
                       type="button"
                       onClick={() => setImages(images.filter((_, j) => j !== i))}
@@ -252,6 +288,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                   </div>
                 ))}
               </div>
+            )}
+            {images.length > 1 && (
+              <p className="text-xs text-gray-400 text-center">Glissez les photos pour les réordonner — la première sera la photo principale</p>
             )}
           </div>
         </div>
