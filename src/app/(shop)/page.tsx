@@ -35,6 +35,27 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Nouveautés — directement après le hero */}
+      {newProducts.length > 0 && (
+        <section className="py-14 bg-[var(--cream)]">
+          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-8 border-b border-[var(--beige-dark)] pb-4">
+              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">Nouveautés</h2>
+              <Link href="/products" className="flex items-center gap-1 text-[11px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity">
+                Tout voir <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+              {newProducts.map((product, index) => (
+                <div key={product.id} className={index >= 6 ? "hidden sm:block" : ""}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Bandeau défilant */}
       <div className="border-y border-[var(--beige-dark)] bg-[var(--cream)] py-2.5 overflow-hidden">
         <div className="flex items-center whitespace-nowrap animate-marquee">
@@ -87,27 +108,6 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
-
-      {/* Nouveautés */}
-      {newProducts.length > 0 && (
-        <section className="py-14 bg-[var(--cream)]">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8 border-b border-[var(--beige-dark)] pb-4">
-              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">Nouveautés</h2>
-              <Link href="/products" className="flex items-center gap-1 text-[11px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity">
-                Tout voir <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-              {newProducts.map((product, index) => (
-                <div key={product.id} className={index >= 6 ? "hidden sm:block" : ""}>
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   )
 }
