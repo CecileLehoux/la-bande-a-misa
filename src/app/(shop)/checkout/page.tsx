@@ -66,7 +66,7 @@ export default function CheckoutPage() {
     }
   }, [session, setValue])
 
-  const shippingCost = subtotal() >= 50 ? 0 : 4.99
+  const shippingCost = 4.99
   const total = subtotal() + shippingCost
 
   const inputClass =
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
               </h2>
               <ul className="space-y-4">
                 {items.map((item) => (
-                  <li key={item.productId} className="flex items-center gap-3">
+                  <li key={item.id} className="flex items-center gap-3">
                     <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-[var(--beige)]">
                       {item.image ? (
                         <Image src={item.image} alt={item.name} fill className="object-cover" />
@@ -260,6 +260,11 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-[var(--dark)] truncate">{item.name}</p>
+                      {item.size && (
+                        <p className="text-xs text-[var(--gray)] bg-[var(--beige)] px-2 py-0.5 rounded-full w-fit mt-0.5">
+                          {item.size}
+                        </p>
+                      )}
                       <p className="text-xs text-[var(--gray)]">{formatPrice(item.price)} / unité</p>
                     </div>
                     <p className="text-sm font-medium text-[var(--dark)]">{formatPrice(item.price * item.quantity)}</p>
@@ -274,11 +279,8 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--gray)]">Livraison</span>
-                  <span className="text-[var(--dark)]">{shippingCost === 0 ? "Offerte" : formatPrice(shippingCost)}</span>
+                  <span className="text-[var(--dark)]">{formatPrice(shippingCost)}</span>
                 </div>
-                {shippingCost > 0 && (
-                  <p className="text-[11px] text-[var(--gray)] italic">Livraison offerte dès {formatPrice(50)}</p>
-                )}
                 <div className="flex justify-between text-base font-bold text-[var(--dark)] pt-2 border-t border-[var(--beige)]">
                   <span>Total</span>
                   <span>{formatPrice(total)}</span>
