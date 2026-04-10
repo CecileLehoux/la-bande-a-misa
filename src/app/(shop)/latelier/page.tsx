@@ -1,56 +1,58 @@
-import Image from "next/image";
+import Image from "next/image"
+import { prisma } from "@/lib/prisma"
 
 export const metadata = {
   title: "L'atelier — La Bande à Misa",
   description:
     "Découvrez l'atelier de La Bande à Misa, ses créations cousues main et l'inspiratrice en chef : Lizzy la petite Cavalier King Charles.",
-};
+}
 
-export default function AtelierPage() {
+export default async function AtelierPage() {
+  const rows = await prisma.setting.findMany({
+    where: { key: { in: ["atelier_overline", "atelier_title", "atelier_body", "atelier_image1", "atelier_image2", "atelier_footer"] } },
+  })
+  const s = Object.fromEntries(rows.map((r) => [r.key, r.value]))
+
+  const overline = s.atelier_overline ?? "Dans les coulisses"
+  const title    = s.atelier_title    ?? "L'atelier"
+  const body     = s.atelier_body     ?? ""
+  const image1   = s.atelier_image1   ?? "/latelier/IMG_8566.JPG"
+  const image2   = s.atelier_image2   ?? "/latelier/IMG_8548.JPG"
+  const footer   = s.atelier_footer   ?? "Chaque pièce est unique — cousue à la main avec soin"
+
+  const paragraphs = body.split(/\n\n+/).filter(Boolean)
+
   return (
     <div className="bg-[var(--cream)] min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-16">
         {/* En-tête */}
         <p className="text-[11px] tracking-widest uppercase text-[var(--gray)] mb-4">
-          Dans les coulisses
+          {overline}
         </p>
         <h1 className="font-[family-name:var(--font-playfair)] text-3xl font-bold text-[var(--dark)] mb-10 leading-tight">
-          L'atelier
+          {title}
         </h1>
 
         {/* Photo + texte */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-14 items-center">
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[var(--beige)]">
             <Image
-              src="/latelier/IMG_8566.JPG"
-              alt="L'atelier La Bande à Misa"
+              src={image1}
+              alt={title}
               fill
               className="object-cover object-[50%_35%]"
               priority
             />
           </div>
           <div className="space-y-5 text-sm text-[var(--gray)] leading-relaxed">
-            <p>
-              La Bande à Misa est un petit atelier où les tissus dansent et les
-              idées fleurissent, inspirés par la vie, les saisons et les petites
-              choses qui réchauffent le cœur.
-            </p>
-            <p>
-              Dans un coin de l'atelier, Lizzy, une petite Cavalier King
-              Charles, observe, regarde et inspire quelques idées... ou quelques
-              sourires.
-            </p>
-            <p>
-              Un travail fait main offrant des prix justes et accessibles. Des
-              créations uniques... et tout simplement irrésistibles !
-            </p>
+            {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
           </div>
         </div>
 
         {/* Deuxième photo */}
         <div className="relative aspect-video overflow-hidden rounded-2xl bg-[var(--beige)]">
           <Image
-            src="/latelier/IMG_8548.JPG"
+            src={image2}
             alt="Créations cousues main"
             fill
             className="object-cover"
@@ -59,9 +61,9 @@ export default function AtelierPage() {
 
         {/* Note bas de page */}
         <p className="mt-10 text-center text-[11px] tracking-widest uppercase text-[var(--gray)]">
-          Chaque pièce est unique — cousue à la main avec soin
+          {footer}
         </p>
       </div>
     </div>
-  );
+  )
 }
