@@ -117,13 +117,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             </ul>
           </div>
 
-          {/* Disponibilité */}
-          <div className="border-t border-[var(--beige-dark)] pt-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">Disponibilité</h3>
-              <Plus className="h-3 w-3 text-[var(--gray)]" />
-            </div>
-          </div>
         </aside>
 
         {/* Grille produits */}
