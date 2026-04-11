@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     data: { name: name.trim(), slug, description: description?.trim() ?? null },
   })
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   revalidatePath("/products")
   revalidatePath("/admin/categories")
 

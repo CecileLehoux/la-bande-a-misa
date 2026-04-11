@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     data: { name: name.trim(), slug: slugify(name.trim()), description: description?.trim() ?? null },
   })
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   revalidatePath("/products")
   revalidatePath("/admin/categories")
 
@@ -46,7 +46,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   await prisma.category.delete({ where: { id } })
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   revalidatePath("/products")
   revalidatePath("/admin/categories")
 
