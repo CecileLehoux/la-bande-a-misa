@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getStripe } from "@/lib/stripe"
 import { prisma } from "@/lib/prisma"
+import { sendOrderConfirmationEmail } from "@/lib/email"
 import type Stripe from "stripe"
 
 export async function POST(req: Request) {
@@ -22,25 +23,38 @@ export async function POST(req: Request) {
 
       if (!orderId) break
 
-      await prisma.$transaction(async (tx) => {
-        const order = await tx.order.update({
+      const order = await prisma.$transaction(async (tx) => {
+        const updated = await tx.order.update({
           where: { id: orderId },
           data: {
             paymentStatus: "PAID",
             paymentIntentId: session.payment_intent as string,
             status: "CONFIRMED",
           },
-          include: { items: true },
+          include: { items: true, shippingAddress: true },
         })
 
         // Decrease stock
-        for (const item of order.items) {
+        for (const item of updated.items) {
           await tx.product.update({
             where: { id: item.productId },
             data: { stock: { decrement: item.quantity } },
           })
         }
+
+        return updated
       })
+
+      // Send confirmation email (non-blocking)
+      sendOrderConfirmationEmail({
+        to: order.email,
+        orderNumber: order.orderNumber,
+        items: order.items,
+        subtotal: order.subtotal,
+        shipping: order.shipping,
+        total: order.total,
+        shippingAddress: order.shippingAddress,
+      }).catch((err) => console.error("Erreur envoi email confirmation:", err))
 
       break
     }
