@@ -1,6 +1,13 @@
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY)
+  }
+  return _resend
+}
 
 type OrderItem = {
   name: string
@@ -151,7 +158,7 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
     </html>
   `
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: "onboarding@resend.dev",
     to,
     subject: `Confirmation de commande n° ${orderNumber}`,
