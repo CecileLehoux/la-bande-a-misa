@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { formatPrice } from "@/lib/utils"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronRight, Package } from "lucide-react"
 import type { Metadata } from "next"
 
@@ -57,42 +58,69 @@ export default async function OrdersPage() {
           </div>
         ) : (
           <ul className="space-y-4">
-            {orders.map((order) => (
-              <li key={order.id}>
-                <Link
-                  href={`/account/orders/${order.id}`}
-                  className="flex items-center justify-between rounded-2xl border border-[var(--beige-dark)] bg-white px-6 py-5 hover:border-[var(--terracotta)] transition-colors group"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-[var(--dark)]">{order.orderNumber}</span>
-                      <span className={`text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full font-medium ${
-                        order.paymentStatus === "PAID"
-                          ? "bg-green-50 text-green-700"
-                          : "bg-[var(--beige)] text-[var(--gray)]"
-                      }`}>
-                        {paymentLabel[order.paymentStatus] ?? order.paymentStatus}
-                      </span>
-                      <span className="text-[10px] tracking-wider uppercase text-[var(--gray)]">
-                        {statusLabel[order.status] ?? order.status}
-                      </span>
+            {orders.map((order) => {
+              const firstItem = order.items[0]
+              const extraCount = order.items.length - 1
+              const title = extraCount > 0
+                ? `${firstItem.name} +${extraCount} article${extraCount > 1 ? "s" : ""}`
+                : firstItem.name
+
+              return (
+                <li key={order.id}>
+                  <Link
+                    href={`/account/orders/${order.id}`}
+                    className="flex items-center gap-4 rounded-2xl border border-[var(--beige-dark)] bg-white px-5 py-4 hover:border-[var(--terracotta)] transition-colors group"
+                  >
+                    {/* Photo */}
+                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-[var(--beige)]">
+                      {firstItem.image ? (
+                        <Image
+                          src={firstItem.image}
+                          alt={firstItem.name}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <Package className="h-6 w-6 text-[var(--beige-dark)]" />
+                        </div>
+                      )}
                     </div>
-                    <p className="text-xs text-[var(--gray)]">
-                      {order.items.length} article{order.items.length > 1 ? "s" : ""} —{" "}
-                      {new Date(order.createdAt).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-[var(--dark)]">{formatPrice(order.total)}</span>
-                    <ChevronRight className="h-4 w-4 text-[var(--gray-light)] group-hover:text-[var(--terracotta)] transition-colors" />
-                  </div>
-                </Link>
-              </li>
-            ))}
+
+                    {/* Infos */}
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <p className="text-sm font-medium text-[var(--dark)] truncate">{title}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full font-medium ${
+                          order.paymentStatus === "PAID"
+                            ? "bg-green-50 text-green-700"
+                            : "bg-[var(--beige)] text-[var(--gray)]"
+                        }`}>
+                          {paymentLabel[order.paymentStatus] ?? order.paymentStatus}
+                        </span>
+                        <span className="text-[10px] tracking-wider uppercase text-[var(--gray)]">
+                          {statusLabel[order.status] ?? order.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[var(--gray)]">
+                        {new Date(order.createdAt).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+
+                    {/* Prix */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-sm font-medium text-[var(--dark)]">{formatPrice(order.total)}</span>
+                      <ChevronRight className="h-4 w-4 text-[var(--gray-light)] group-hover:text-[var(--terracotta)] transition-colors" />
+                    </div>
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         )}
       </div>
