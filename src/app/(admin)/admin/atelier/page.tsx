@@ -14,6 +14,7 @@ type AtelierSettings = {
   atelier_capsule_title: string
   atelier_capsule_text: string
   atelier_capsule_image: string
+  atelier_capsule_visible: string
 }
 
 const defaultSettings: AtelierSettings = {
@@ -26,6 +27,7 @@ const defaultSettings: AtelierSettings = {
   atelier_capsule_title: "Capsule",
   atelier_capsule_text: "",
   atelier_capsule_image: "",
+  atelier_capsule_visible: "false",
 }
 
 export default function AtelierAdminPage() {
@@ -181,7 +183,29 @@ export default function AtelierAdminPage() {
         </div>
         {/* Section Capsule */}
         <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-          <h2 className="font-semibold text-gray-900">Section Capsule</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-gray-900">Section Capsule</h2>
+            <label className="flex items-center gap-2.5 cursor-pointer select-none">
+              <span className="text-sm text-gray-500">
+                {settings.atelier_capsule_visible === "true" ? "Affichée" : "Masquée"}
+              </span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={settings.atelier_capsule_visible === "true"}
+                onClick={() => set("atelier_capsule_visible", settings.atelier_capsule_visible === "true" ? "false" : "true")}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                  settings.atelier_capsule_visible === "true" ? "bg-gray-900" : "bg-gray-200"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    settings.atelier_capsule_visible === "true" ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </label>
+          </div>
 
           <div>
             <label className={labelClass}>Titre</label>
