@@ -1,3 +1,10 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Contactez La Bande à Misa pour toute question sur vos commandes ou nos créations cousues main.",
+}
+
 export default function ContactPage() {
   return (
     <div className="bg-[var(--cream)] min-h-screen">

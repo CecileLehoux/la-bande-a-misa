@@ -3,7 +3,16 @@ import { ProductCard } from "@/components/shop/product-card"
 import type { Metadata } from "next"
 import { Plus, Minus } from "lucide-react"
 
-export const metadata: Metadata = { title: "Boutique" }
+export const metadata: Metadata = {
+  title: "Boutique",
+  description: "Découvrez toutes nos créations cousues main — bandanas, chouchous et accessoires pour chiens, chats et humains.",
+  openGraph: {
+    title: "Boutique | La Bande à Misa",
+    description: "Découvrez toutes nos créations cousues main — bandanas, chouchous et accessoires pour chiens, chats et humains.",
+    url: "/products",
+    type: "website",
+  },
+}
 
 interface SearchParams {
   category?: string

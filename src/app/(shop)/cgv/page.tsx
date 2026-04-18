@@ -1,3 +1,11 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Conditions générales de vente",
+  description: "Conditions générales de vente de La Bande à Misa.",
+  robots: { index: false },
+}
+
 export default function CGVPage() {
   return (
     <div className="bg-[var(--cream)] min-h-screen">

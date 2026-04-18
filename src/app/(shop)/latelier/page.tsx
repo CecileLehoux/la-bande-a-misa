@@ -2,9 +2,14 @@ import Image from "next/image"
 import { prisma } from "@/lib/prisma"
 
 export const metadata = {
-  title: "L'atelier — La Bande à Misa",
-  description:
-    "Découvrez l'atelier de La Bande à Misa, ses créations cousues main et l'inspiratrice en chef : Lizzy la petite Cavalier King Charles.",
+  title: "L'atelier",
+  description: "Découvrez l'atelier de La Bande à Misa, ses créations cousues main et l'inspiratrice en chef : Lizzy la petite Cavalier King Charles.",
+  openGraph: {
+    title: "L'atelier | La Bande à Misa",
+    description: "Découvrez l'atelier de La Bande à Misa, ses créations cousues main et l'inspiratrice en chef : Lizzy la petite Cavalier King Charles.",
+    url: "/latelier",
+    type: "website",
+  },
 }
 
 export default async function AtelierPage() {

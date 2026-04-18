@@ -16,12 +16,27 @@ const jost = Jost({
   display: "swap",
 })
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandea-misa.fr"
+
 export const metadata: Metadata = {
   title: {
     default: "La Bande à Misa — Créations cousues main",
     template: "%s | La Bande à Misa",
   },
-  description: "Créations cousues main avec amour — linge de maison, accessoires bébé et sacs artisanaux.",
+  description: "Accessoires cousus main pour chiens, chats et humains. Bandanas, chouchous et créations artisanales fabriquées avec amour.",
+  metadataBase: new URL(baseUrl),
+  openGraph: {
+    siteName: "La Bande à Misa",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

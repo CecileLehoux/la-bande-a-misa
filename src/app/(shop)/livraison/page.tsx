@@ -1,3 +1,10 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Livraison & retours",
+  description: "Informations sur la livraison et les retours de vos commandes La Bande à Misa.",
+}
+
 export default function LivraisonRetoursPage() {
   return (
     <div className="bg-[var(--cream)] min-h-screen">

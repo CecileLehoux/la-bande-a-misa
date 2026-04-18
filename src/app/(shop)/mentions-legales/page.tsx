@@ -1,3 +1,11 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Mentions légales",
+  description: "Mentions légales de La Bande à Misa.",
+  robots: { index: false },
+}
+
 export default function MentionsLegalesPage() {
   return (
     <div className="bg-[var(--cream)] min-h-screen">
