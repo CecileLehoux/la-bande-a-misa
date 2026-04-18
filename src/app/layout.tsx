@@ -16,7 +16,7 @@ const jost = Jost({
   display: "swap",
 })
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandea-misa.fr"
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandeamisa.fr"
 
 export const metadata: Metadata = {
   title: {

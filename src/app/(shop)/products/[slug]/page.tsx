@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { ProductClient } from "./product-client"
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandea-misa.fr"
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandeamisa.fr"
 
 async function getProduct(slug: string) {
   return prisma.product.findUnique({
