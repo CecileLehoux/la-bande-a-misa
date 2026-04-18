@@ -13,7 +13,7 @@ async function getProduct(slug: string) {
       categories: { include: { category: true } },
       reviews: {
         where: { isApproved: true },
-        include: { user: { select: { name: true } } },
+        include: { user: { select: { name: true, image: true } } },
         orderBy: { createdAt: "desc" },
       },
     },
