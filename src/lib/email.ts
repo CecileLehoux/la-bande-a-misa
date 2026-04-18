@@ -159,7 +159,7 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
   `
 
   const { data, error } = await getResend().emails.send({
-    from: "onboarding@resend.dev",
+    from: "La Bande à Misa <commandes@labandeamisa.fr>",
     to,
     subject: `Confirmation de commande n° ${orderNumber}`,
     html,
