@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export default async function HomePage() {
-  const [/* featuredProducts */ , newProducts] = await Promise.all([
+  const [/* featuredProducts */ , newProducts, bannerSetting] = await Promise.all([
     prisma.product.findMany({
       where: { isActive: true, isFeatured: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
@@ -18,7 +18,10 @@ export default async function HomePage() {
       take: 8,
       orderBy: { sortOrder: "asc" },
     }),
+    prisma.setting.findUnique({ where: { key: "banner_image" } }),
   ])
+
+  const bannerSrc = bannerSetting?.value || "/banner.png"
 
   return (
     <div>
@@ -26,11 +29,12 @@ export default async function HomePage() {
       <section className="w-full overflow-hidden bg-[var(--beige)]">
         <div className="relative w-full h-[70vh] max-h-[700px] min-h-[400px]">
           <Image
-            src="/banner.png"
+            src={bannerSrc}
             alt="La Bande à Misa"
             fill
             className="object-cover object-bottom"
             priority
+            unoptimized={bannerSrc.startsWith("https://")}
           />
         </div>
       </section>
