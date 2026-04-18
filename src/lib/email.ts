@@ -171,3 +171,111 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
 
   console.log("Resend email sent:", data)
 }
+
+const emailWrapper = (content: string) => `
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#faf8f5;font-family:Georgia,serif;color:#2c2c2c;">
+  <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:4px;overflow:hidden;">
+    <div style="background-color:#c4826a;padding:32px 40px;text-align:center;">
+      <h1 style="margin:0;color:#fff;font-size:24px;letter-spacing:2px;font-weight:400;">LA BANDE À MISA</h1>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:1px;">Accessoires cousus main</p>
+    </div>
+    <div style="padding:40px;">${content}</div>
+    <div style="background:#faf8f5;padding:20px 40px;text-align:center;border-top:1px solid #f0ebe3;">
+      <p style="margin:0;color:#aaa;font-size:12px;">La Bande à Misa — Accessoires cousus main</p>
+    </div>
+  </div>
+</body>
+</html>`
+
+async function sendEmail(to: string, subject: string, html: string) {
+  const { data, error } = await getResend().emails.send({
+    from: "La Bande à Misa <commandes@labandeamisa.fr>",
+    to,
+    subject,
+    html,
+  })
+  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`)
+  console.log("Resend email sent:", data)
+}
+
+export async function sendOrderShippedEmail({
+  to,
+  orderNumber,
+  trackingNumber,
+}: {
+  to: string
+  orderNumber: string
+  trackingNumber?: string | null
+}) {
+  const trackingHtml = trackingNumber
+    ? `<div style="margin-top:24px;padding:16px 20px;background:#faf8f5;border-radius:4px;">
+        <p style="margin:0;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:1px;">Numéro de suivi</p>
+        <p style="margin:8px 0 0;font-size:16px;font-weight:600;color:#2c2c2c;">${trackingNumber}</p>
+      </div>`
+    : ""
+
+  const html = emailWrapper(`
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Votre commande est en route !</h2>
+    <p style="margin:0 0 24px;color:#666;font-size:14px;">Commande n° <strong>${orderNumber}</strong></p>
+    <p style="line-height:1.7;color:#444;">
+      Bonjour,<br><br>
+      Bonne nouvelle — votre commande vient d'être expédiée ! Vous la recevrez dans les prochains jours.
+    </p>
+    ${trackingHtml}
+    <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
+      Des questions ? Répondez à cet email ou contactez-nous sur notre site.<br><br>
+      <em>L'équipe La Bande à Misa</em>
+    </p>
+  `)
+
+  await sendEmail(to, `Votre commande n° ${orderNumber} a été expédiée`, html)
+}
+
+export async function sendOrderCancelledEmail({
+  to,
+  orderNumber,
+}: {
+  to: string
+  orderNumber: string
+}) {
+  const html = emailWrapper(`
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Votre commande a été annulée</h2>
+    <p style="margin:0 0 24px;color:#666;font-size:14px;">Commande n° <strong>${orderNumber}</strong></p>
+    <p style="line-height:1.7;color:#444;">
+      Bonjour,<br><br>
+      Votre commande a bien été annulée. Si vous avez été débité(e), le remboursement sera effectué sous 5 à 10 jours ouvrés selon votre banque.
+    </p>
+    <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
+      Pour toute question, répondez à cet email ou contactez-nous sur notre site.<br><br>
+      <em>L'équipe La Bande à Misa</em>
+    </p>
+  `)
+
+  await sendEmail(to, `Votre commande n° ${orderNumber} a été annulée`, html)
+}
+
+export async function sendOrderDeliveredEmail({
+  to,
+  orderNumber,
+}: {
+  to: string
+  orderNumber: string
+}) {
+  const html = emailWrapper(`
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Votre commande est arrivée !</h2>
+    <p style="margin:0 0 24px;color:#666;font-size:14px;">Commande n° <strong>${orderNumber}</strong></p>
+    <p style="line-height:1.7;color:#444;">
+      Bonjour,<br><br>
+      Nous espérons que votre commande vous plaît ! Si vous avez un moment, votre avis nous aiderait beaucoup à faire connaître nos créations.
+    </p>
+    <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
+      Merci pour votre confiance et à bientôt !<br><br>
+      <em>L'équipe La Bande à Misa</em>
+    </p>
+  `)
+
+  await sendEmail(to, `Votre commande n° ${orderNumber} a été livrée — donnez votre avis !`, html)
+}

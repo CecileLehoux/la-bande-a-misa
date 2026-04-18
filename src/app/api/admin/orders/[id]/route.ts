@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import {
+  sendOrderShippedEmail,
+  sendOrderCancelledEmail,
+  sendOrderDeliveredEmail,
+} from "@/lib/email"
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -22,6 +27,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       ...(status === "CANCELLED" && { cancelledAt: new Date() }),
     },
   })
+
+  if (status === "SHIPPED") {
+    sendOrderShippedEmail({
+      to: order.email,
+      orderNumber: order.orderNumber,
+      trackingNumber: trackingNumber ?? order.trackingNumber,
+    }).catch((err) => console.error("Erreur email expédition:", err))
+  } else if (status === "CANCELLED") {
+    sendOrderCancelledEmail({
+      to: order.email,
+      orderNumber: order.orderNumber,
+    }).catch((err) => console.error("Erreur email annulation:", err))
+  } else if (status === "DELIVERED") {
+    sendOrderDeliveredEmail({
+      to: order.email,
+      orderNumber: order.orderNumber,
+    }).catch((err) => console.error("Erreur email livraison:", err))
+  }
 
   return NextResponse.json(order)
 }
