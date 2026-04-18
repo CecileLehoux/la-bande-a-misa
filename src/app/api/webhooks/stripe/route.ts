@@ -45,16 +45,21 @@ export async function POST(req: Request) {
         return updated
       })
 
-      // Send confirmation email (non-blocking)
-      sendOrderConfirmationEmail({
-        to: order.email,
-        orderNumber: order.orderNumber,
-        items: order.items,
-        subtotal: order.subtotal,
-        shipping: order.shipping,
-        total: order.total,
-        shippingAddress: order.shippingAddress,
-      }).catch((err) => console.error("Erreur envoi email confirmation:", err))
+      // Send confirmation email
+      try {
+        await sendOrderConfirmationEmail({
+          to: order.email,
+          orderNumber: order.orderNumber,
+          items: order.items,
+          subtotal: order.subtotal,
+          shipping: order.shipping,
+          total: order.total,
+          shippingAddress: order.shippingAddress,
+        })
+        console.log(`Email confirmation envoyé à ${order.email} pour commande ${order.orderNumber}`)
+      } catch (err) {
+        console.error("Erreur envoi email confirmation:", err)
+      }
 
       break
     }

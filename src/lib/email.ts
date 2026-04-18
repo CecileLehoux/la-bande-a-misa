@@ -158,10 +158,16 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
     </html>
   `
 
-  await getResend().emails.send({
+  const { data, error } = await getResend().emails.send({
     from: "onboarding@resend.dev",
     to,
     subject: `Confirmation de commande n° ${orderNumber}`,
     html,
   })
+
+  if (error) {
+    throw new Error(`Resend error: ${JSON.stringify(error)}`)
+  }
+
+  console.log("Resend email sent:", data)
 }

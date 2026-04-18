@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
-const KEYS = ["atelier_overline", "atelier_title", "atelier_body", "atelier_image1", "atelier_image2", "atelier_footer"]
+const KEYS = ["atelier_overline", "atelier_title", "atelier_body", "atelier_image1", "atelier_image2", "atelier_footer", "atelier_capsule_title", "atelier_capsule_text", "atelier_capsule_image"]
 
 export async function GET() {
   const session = await auth()

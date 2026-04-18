@@ -11,6 +11,9 @@ type AtelierSettings = {
   atelier_image1: string
   atelier_image2: string
   atelier_footer: string
+  atelier_capsule_title: string
+  atelier_capsule_text: string
+  atelier_capsule_image: string
 }
 
 const defaultSettings: AtelierSettings = {
@@ -20,6 +23,9 @@ const defaultSettings: AtelierSettings = {
   atelier_image1: "",
   atelier_image2: "",
   atelier_footer: "",
+  atelier_capsule_title: "Capsule",
+  atelier_capsule_text: "",
+  atelier_capsule_image: "",
 }
 
 export default function AtelierAdminPage() {
@@ -29,6 +35,7 @@ export default function AtelierAdminPage() {
   const [saved, setSaved] = useState(false)
   const [uploading1, setUploading1] = useState(false)
   const [uploading2, setUploading2] = useState(false)
+  const [uploadingCapsule, setUploadingCapsule] = useState(false)
 
   useEffect(() => {
     fetch("/api/admin/settings/atelier")
@@ -53,7 +60,7 @@ export default function AtelierAdminPage() {
 
   const uploadImage = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    key: "atelier_image1" | "atelier_image2",
+    key: "atelier_image1" | "atelier_image2" | "atelier_capsule_image",
     setUploading: (v: boolean) => void
   ) => {
     const file = e.target.files?.[0]
@@ -168,6 +175,42 @@ export default function AtelierAdminPage() {
             {settings.atelier_image2 && (
               <div className="mt-3 relative aspect-video w-64 overflow-hidden rounded-xl bg-gray-100">
                 <Image src={settings.atelier_image2} alt="Photo 2" fill className="object-cover" unoptimized />
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Section Capsule */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+          <h2 className="font-semibold text-gray-900">Section Capsule</h2>
+
+          <div>
+            <label className={labelClass}>Titre</label>
+            <input type="text" value={settings.atelier_capsule_title} onChange={(e) => set("atelier_capsule_title", e.target.value)} className={inputClass} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Texte <span className="text-gray-400 font-normal">(sépare les paragraphes par une ligne vide)</span></label>
+            <textarea
+              value={settings.atelier_capsule_text}
+              onChange={(e) => set("atelier_capsule_text", e.target.value)}
+              rows={5}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass}>Photo</label>
+            <div className="flex gap-3 items-start">
+              <input type="text" value={settings.atelier_capsule_image} onChange={(e) => set("atelier_capsule_image", e.target.value)} className={`${inputClass} flex-1`} placeholder="URL ou uploade une photo" />
+              <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors whitespace-nowrap">
+                {uploadingCapsule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                {uploadingCapsule ? "Upload…" : "Uploader"}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadImage(e, "atelier_capsule_image", setUploadingCapsule)} />
+              </label>
+            </div>
+            {settings.atelier_capsule_image && (
+              <div className="mt-3 relative aspect-[4/3] w-48 overflow-hidden rounded-xl bg-gray-100">
+                <Image src={settings.atelier_capsule_image} alt="Photo capsule" fill className="object-cover" unoptimized />
               </div>
             )}
           </div>

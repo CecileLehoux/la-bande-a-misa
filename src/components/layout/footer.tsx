@@ -1,6 +1,13 @@
 import Link from "next/link"
+import { prisma } from "@/lib/prisma"
 
-export function Footer() {
+export async function Footer() {
+  const categories = await prisma.category.findMany({
+    where: { isActive: true, parentId: null },
+    orderBy: { sortOrder: "asc" },
+    select: { name: true, slug: true },
+  })
+
   return (
     <footer className="border-t border-[var(--beige-dark)] bg-[var(--cream)]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -9,8 +16,13 @@ export function Footer() {
           <div>
             <h3 className="text-xs tracking-widest uppercase text-[var(--dark)] mb-5">La boutique</h3>
             <ul className="space-y-3">
-              <li><Link href="/products?category=accessoires-humains" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires humains</Link></li>
-              <li><Link href="/products?category=accessoires-chiens-chats" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Accessoires chiens et chats</Link></li>
+              {categories.map((cat) => (
+                <li key={cat.slug}>
+                  <Link href={`/products?category=${cat.slug}`} className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
               <li><Link href="/latelier" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">L'atelier</Link></li>
               <li><Link href="/products" className="text-sm text-[var(--gray)] hover:text-[var(--dark)] transition-colors">Toute la collection</Link></li>
             </ul>
