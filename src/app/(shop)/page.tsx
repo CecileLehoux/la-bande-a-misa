@@ -102,6 +102,26 @@ export default async function HomePage() {
         </section>
       )} */}
 
+      {/* Témoignages */}
+      <section className="py-14 bg-[var(--beige)]">
+        <div className="mx-auto max-w-5xl px-6 lg:px-8">
+          <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)] mb-10 text-center">Ils en parlent</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {[
+              { name: "Anna", text: "Le tissu est vraiment doux, j'ai été surprise par la qualité. Et c'est beau en plus !" },
+              { name: "Lisa", text: "Ça fait plusieurs mois que mon chien le porte, c'est toujours aussi solide. Très bonne surprise." },
+              { name: "Laura", text: "J'avais un peu peur de commander en ligne mais la qualité est vraiment au rendez-vous. Je rachèterai !" },
+            ].map(({ name, text }) => (
+              <div key={name} className="bg-[var(--cream)] rounded-2xl px-6 py-7 flex flex-col gap-4">
+                <p className="text-xs text-[var(--terracotta)]">★★★★★</p>
+                <p className="text-sm text-[var(--gray)] leading-relaxed italic">&ldquo;{text}&rdquo;</p>
+                <p className="text-xs font-medium text-[var(--dark)] tracking-wide">{name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Séparateur visuel */}
       <div className="bg-[var(--beige)] py-16">
         <div className="mx-auto max-w-5xl px-6 text-center">
