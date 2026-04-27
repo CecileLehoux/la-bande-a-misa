@@ -351,3 +351,32 @@ export async function sendOrderRefundedEmail({
 
   await sendEmail(to, `Remboursement de votre commande n° ${orderNumber}`, html)
 }
+
+export async function sendPasswordResetEmail({
+  to,
+  resetUrl,
+}: {
+  to: string
+  resetUrl: string
+}) {
+  const html = emailWrapper(`
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Réinitialisation de votre mot de passe</h2>
+    <p style="line-height:1.7;color:#444;margin:0 0 24px;">
+      Bonjour,<br><br>
+      Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous pour en choisir un nouveau.
+    </p>
+    <div style="text-align:center;margin:0 0 24px;">
+      <a href="${resetUrl}" style="display:inline-block;background-color:#c4826a;color:#fff;padding:14px 32px;border-radius:100px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:0.5px;">
+        Réinitialiser mon mot de passe
+      </a>
+    </div>
+    <p style="line-height:1.7;color:#666;font-size:13px;margin:0 0 8px;">
+      Ce lien est valable <strong>1 heure</strong>. Si vous n'avez pas fait cette demande, ignorez cet email.
+    </p>
+    <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
+      <em>L'équipe La Bande à Misa</em>
+    </p>
+  `)
+
+  await sendEmail(to, "Réinitialisation de votre mot de passe — La Bande à Misa", html)
+}

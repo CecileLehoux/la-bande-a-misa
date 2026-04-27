@@ -66,13 +66,20 @@ function LoginForm() {
               error={errors.email?.message}
               {...register("email")}
             />
-            <Input
-              label="Mot de passe"
-              type="password"
-              placeholder="••••••••"
-              error={errors.password?.message}
-              {...register("password")}
-            />
+            <div>
+              <Input
+                label="Mot de passe"
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                {...register("password")}
+              />
+              <div className="mt-1 text-right">
+                <Link href="/forgot-password" className="text-xs text-[var(--gray)] hover:text-[var(--terracotta)] hover:underline">
+                  Mot de passe oublié ?
+                </Link>
+              </div>
+            </div>
 
             {error && (
               <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">
