@@ -121,7 +121,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             )}
           </div>
 
-          <OrderStatusUpdater orderId={order.id} currentStatus={order.status as OrderStatus} />
+          <OrderStatusUpdater
+            orderId={order.id}
+            currentStatus={order.status as OrderStatus}
+            paymentStatus={order.paymentStatus}
+            paymentIntentId={order.paymentIntentId}
+          />
         </div>
       </div>
     </div>
