@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { getStripe } from "@/lib/stripe"
+import { sendOrderRefundedEmail } from "@/lib/email"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -32,6 +33,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     where: { id },
     data: { paymentStatus: "REFUNDED", status: "REFUNDED" },
   })
+
+  // Send refund email to customer (non-blocking)
+  sendOrderRefundedEmail({
+    to: order.email,
+    orderNumber: order.orderNumber,
+    total: order.total,
+  }).catch((err) => console.error("Erreur email remboursement:", err))
 
   return NextResponse.json({ success: true })
 }

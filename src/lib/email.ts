@@ -325,3 +325,29 @@ export async function sendOrderDeliveredEmail({
 
   await sendEmail(to, `Votre commande n° ${orderNumber} a été livrée — donnez votre avis !`, html)
 }
+
+export async function sendOrderRefundedEmail({
+  to,
+  orderNumber,
+  total,
+}: {
+  to: string
+  orderNumber: string
+  total: number
+}) {
+  const html = emailWrapper(`
+    <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Votre remboursement est en cours</h2>
+    <p style="margin:0 0 24px;color:#666;font-size:14px;">Commande n° <strong>${orderNumber}</strong></p>
+    <p style="line-height:1.7;color:#444;">
+      Bonjour,<br><br>
+      Nous avons procédé au remboursement intégral de votre commande d'un montant de <strong>${total.toFixed(2)} €</strong>.<br><br>
+      Le remboursement sera crédité sur votre moyen de paiement initial sous <strong>5 à 10 jours ouvrés</strong> selon votre banque.
+    </p>
+    <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
+      Nous nous excusons pour la gêne occasionnée et espérons vous retrouver bientôt.<br><br>
+      <em>L'équipe La Bande à Misa</em>
+    </p>
+  `)
+
+  await sendEmail(to, `Remboursement de votre commande n° ${orderNumber}`, html)
+}
