@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Pencil, Trash2, Plus, X, Check, Tag } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Pencil, Trash2, Plus, X, Check, Tag, GripVertical, Save, Loader2 } from "lucide-react"
 
 interface Category {
   id: string
   name: string
   slug: string
   description: string | null
+  sortOrder: number
   _count: { products: number }
 }
 
@@ -27,6 +28,13 @@ export default function CategoriesPage() {
   const [editName, setEditName] = useState("")
   const [editDesc, setEditDesc] = useState("")
   const [saving, setSaving] = useState(false)
+
+  // Drag & drop
+  const dragIndex = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
+  const [savingOrder, setSavingOrder] = useState(false)
+  const [savedOrder, setSavedOrder] = useState(false)
 
   const load = async () => {
     setLoading(true)
@@ -91,6 +99,48 @@ export default function CategoriesPage() {
     }
   }
 
+  // Drag & drop handlers
+  const handleDragStart = (index: number) => {
+    dragIndex.current = index
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOverIndex(index)
+  }
+
+  const handleDrop = (index: number) => {
+    const from = dragIndex.current
+    if (from === null || from === index) return
+    const updated = [...categories]
+    const [moved] = updated.splice(from, 1)
+    updated.splice(index, 0, moved)
+    setCategories(updated)
+    setIsDirty(true)
+    dragIndex.current = null
+    setDragOverIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    dragIndex.current = null
+    setDragOverIndex(null)
+  }
+
+  const handleSaveOrder = async () => {
+    setSavingOrder(true)
+    await fetch("/api/admin/categories/reorder", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categories: categories.map((c, i) => ({ id: c.id, sortOrder: i })),
+      }),
+    })
+    setSavingOrder(false)
+    setSavedOrder(true)
+    setIsDirty(false)
+    setTimeout(() => setSavedOrder(false), 2000)
+  }
+
   return (
     <div className="p-8 max-w-3xl">
       <div className="mb-8">
@@ -133,6 +183,27 @@ export default function CategoriesPage() {
         </button>
       </form>
 
+      {/* Barre de sauvegarde ordre */}
+      {isDirty && (
+        <div className="mb-4 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+          <p className="text-sm text-amber-700">Ordre modifié — n'oublie pas de sauvegarder</p>
+          <button
+            onClick={handleSaveOrder}
+            disabled={savingOrder}
+            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-60 transition-colors"
+          >
+            {savingOrder ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {savingOrder ? "Sauvegarde…" : "Sauvegarder l'ordre"}
+          </button>
+        </div>
+      )}
+
+      {savedOrder && (
+        <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+          <p className="text-sm text-green-700">✓ Ordre sauvegardé — le header du site est mis à jour</p>
+        </div>
+      )}
+
       {/* Liste */}
       <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
         {loading ? (
@@ -143,6 +214,7 @@ export default function CategoriesPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 bg-gray-50">
               <tr>
+                <th className="px-3 py-3 w-8" />
                 <th className="px-5 py-3 text-left font-medium text-gray-500">Nom</th>
                 <th className="px-5 py-3 text-left font-medium text-gray-500">Description</th>
                 <th className="px-5 py-3 text-center font-medium text-gray-500">Produits</th>
@@ -150,8 +222,19 @@ export default function CategoriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {categories.map((cat) => (
-                <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
+              {categories.map((cat, index) => (
+                <tr
+                  key={cat.id}
+                  draggable={editId !== cat.id}
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDrop={() => handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                  className={`hover:bg-gray-50 transition-colors ${editId !== cat.id ? "cursor-grab active:cursor-grabbing" : ""} ${dragOverIndex === index ? "bg-blue-50 border-t-2 border-blue-400" : ""}`}
+                >
+                  <td className="px-3 py-3">
+                    <GripVertical className="h-4 w-4 text-gray-300" />
+                  </td>
                   {editId === cat.id ? (
                     <>
                       <td className="px-4 py-2">
@@ -228,6 +311,9 @@ export default function CategoriesPage() {
           </table>
         )}
       </div>
+      <p className="mt-3 text-xs text-gray-400 text-center">
+        Glisse les lignes pour réordonner — l'ordre est reflété dans le header du site après sauvegarde
+      </p>
     </div>
   )
 }
