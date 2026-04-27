@@ -226,11 +226,11 @@ const emailWrapper = (content: string) => `
   <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:4px;overflow:hidden;">
     <div style="background-color:#c4826a;padding:32px 40px;text-align:center;">
       <h1 style="margin:0;color:#fff;font-size:24px;letter-spacing:2px;font-weight:400;">LA BANDE À MISA</h1>
-      <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:1px;">Accessoires cousus main</p>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:1px;">Créations cousues main</p>
     </div>
     <div style="padding:40px;">${content}</div>
     <div style="background:#faf8f5;padding:20px 40px;text-align:center;border-top:1px solid #f0ebe3;">
-      <p style="margin:0;color:#aaa;font-size:12px;">La Bande à Misa — Accessoires cousus main</p>
+      <p style="margin:0;color:#aaa;font-size:12px;">La Bande à Misa — Créations cousues main</p>
     </div>
   </div>
 </body>
