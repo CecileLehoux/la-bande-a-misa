@@ -56,7 +56,7 @@ export default async function HomePage() {
         <div className="flex items-center whitespace-nowrap animate-marquee">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="text-[11px] tracking-widest uppercase text-[var(--gray)] px-8">
-              Tout cousu main ✦ Livraison soignée ✦ Cartes cadeaux ✦
+              Tout cousu main ✦ Livraison soignée ✦
             </span>
           ))}
         </div>
