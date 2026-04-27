@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { getStripe } from "@/lib/stripe"
 import { prisma } from "@/lib/prisma"
-import { sendOrderConfirmationEmail } from "@/lib/email"
+import { sendOrderConfirmationEmail, sendOrderNotificationEmail } from "@/lib/email"
 import type Stripe from "stripe"
 
 export async function POST(req: Request) {
@@ -45,9 +45,9 @@ export async function POST(req: Request) {
         return updated
       })
 
-      // Send confirmation email
-      try {
-        await sendOrderConfirmationEmail({
+      // Send confirmation email to customer + notification to shop owner (non-blocking)
+      Promise.allSettled([
+        sendOrderConfirmationEmail({
           to: order.email,
           orderNumber: order.orderNumber,
           items: order.items,
@@ -55,11 +55,21 @@ export async function POST(req: Request) {
           shipping: order.shipping,
           total: order.total,
           shippingAddress: order.shippingAddress,
+        }),
+        sendOrderNotificationEmail({
+          orderNumber: order.orderNumber,
+          customerEmail: order.email,
+          items: order.items,
+          total: order.total,
+          shippingAddress: order.shippingAddress,
+        }),
+      ]).then((results) => {
+        results.forEach((r, i) => {
+          if (r.status === "rejected") {
+            console.error(`Erreur envoi email [${i === 0 ? "confirmation client" : "notification admin"}]:`, r.reason)
+          }
         })
-        console.log(`Email confirmation envoyé à ${order.email} pour commande ${order.orderNumber}`)
-      } catch (err) {
-        console.error("Erreur envoi email confirmation:", err)
-      }
+      })
 
       break
     }

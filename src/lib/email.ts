@@ -172,6 +172,52 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
   console.log("Resend email sent:", data)
 }
 
+type SendOrderNotificationParams = {
+  orderNumber: string
+  customerEmail: string
+  items: OrderItem[]
+  total: number
+  shippingAddress?: {
+    firstName: string
+    lastName: string
+    address1: string
+    city: string
+    postalCode: string
+  } | null
+}
+
+export async function sendOrderNotificationEmail(params: SendOrderNotificationParams) {
+  const { orderNumber, customerEmail, items, total, shippingAddress } = params
+
+  const itemsText = items
+    .map((item) => `- ${item.name}${item.size ? ` (${item.size})` : ""} × ${item.quantity} — ${item.total.toFixed(2)} €`)
+    .join("\n")
+
+  const addressText = shippingAddress
+    ? `${shippingAddress.firstName} ${shippingAddress.lastName}, ${shippingAddress.address1}, ${shippingAddress.postalCode} ${shippingAddress.city}`
+    : "Non renseignée"
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #2c2c2c;">
+      <h2 style="margin: 0 0 16px; color: #c4826a;">🛍️ Nouvelle commande n° ${orderNumber}</h2>
+      <p style="margin: 0 0 8px;"><strong>Client :</strong> ${customerEmail}</p>
+      <p style="margin: 0 0 8px;"><strong>Livraison :</strong> ${addressText}</p>
+      <p style="margin: 0 0 16px;"><strong>Total :</strong> ${total.toFixed(2)} €</p>
+      <pre style="background: #faf8f5; padding: 16px; border-radius: 4px; font-size: 13px; line-height: 1.6;">${itemsText}</pre>
+      <p style="margin: 16px 0 0; font-size: 12px; color: #888;">
+        Retrouve la commande dans ton <a href="https://la-bande-a-misa.vercel.app/admin/orders" style="color: #c4826a;">espace admin</a>.
+      </p>
+    </div>
+  `
+
+  await getResend().emails.send({
+    from: "La Bande à Misa <commandes@labandeamisa.fr>",
+    to: "isamandra@icloud.com",
+    subject: `🛍️ Nouvelle commande n° ${orderNumber} — ${total.toFixed(2)} €`,
+    html,
+  })
+}
+
 const emailWrapper = (content: string) => `
 <!DOCTYPE html>
 <html lang="fr">
