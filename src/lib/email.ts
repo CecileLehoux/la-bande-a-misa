@@ -81,7 +81,7 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
             LA BANDE À MISA
           </h1>
           <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 13px; letter-spacing: 1px;">
-            Accessoires cousus main pour chiens
+            Créations cousues main
           </p>
         </div>
 
@@ -149,7 +149,7 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
         <!-- Footer -->
         <div style="background: #faf8f5; padding: 20px 40px; text-align: center; border-top: 1px solid #f0ebe3;">
           <p style="margin: 0; color: #aaa; font-size: 12px;">
-            La Bande à Misa — Accessoires cousus main pour chiens
+            La Bande à Misa — Créations cousues main
           </p>
         </div>
 
