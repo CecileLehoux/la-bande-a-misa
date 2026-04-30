@@ -9,9 +9,11 @@ import Link from "next/link"
 import type { ProductWithDetails } from "@/types"
 
 export function ProductClient({ product }: { product: ProductWithDetails }) {
+  const sizes: string[] = product.sizes ? JSON.parse(product.sizes) : []
+
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(sizes.length === 1 ? sizes[0] : null)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const { addItem, openCart } = useCartStore()
 
@@ -21,8 +23,6 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
 
   const prev = () => setSelectedImage((selectedImage - 1 + total) % total)
   const next = () => setSelectedImage((selectedImage + 1) % total)
-
-  const sizes: string[] = product.sizes ? JSON.parse(product.sizes) : []
 
   const handleAddToCart = () => {
     if (sizes.length > 0 && !selectedSize) return
@@ -151,7 +151,7 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
                     </button>
                   ))}
                 </div>
-                {!selectedSize && <p className="text-[11px] text-[var(--terracotta)]">Veuillez choisir une taille</p>}
+                {!selectedSize && sizes.length > 1 && <p className="text-[11px] text-[var(--terracotta)]">Veuillez choisir une taille</p>}
               </div>
             )}
 
