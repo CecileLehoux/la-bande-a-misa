@@ -14,9 +14,22 @@ function SuccessContent() {
   const cleared = useRef(false)
 
   useEffect(() => {
-    if (!cleared.current) {
-      cleared.current = true
-      clearCart()
+    // Attendre que Zustand ait fini de s'hydrater depuis localStorage
+    // avant de vider le panier, sinon clearCart() s'exécute sur un store vide
+    // et les articles reviennent au moment de l'hydration
+    if (useCartStore.persist.hasHydrated()) {
+      if (!cleared.current) {
+        cleared.current = true
+        clearCart()
+      }
+    } else {
+      const unsub = useCartStore.persist.onFinishHydration(() => {
+        if (!cleared.current) {
+          cleared.current = true
+          clearCart()
+        }
+      })
+      return unsub
     }
   }, [clearCart])
 
