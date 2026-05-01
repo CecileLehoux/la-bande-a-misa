@@ -5,6 +5,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -51,7 +52,7 @@ function LoginForm() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <span className="font-[family-name:var(--font-playfair)] text-3xl font-bold text-[var(--dark)]">La Bande à Misa</span>
+            <Image src="/logo.png" alt="La Bande à Misa" width={200} height={80} className="h-auto" priority />
           </Link>
           <h1 className="mt-3 text-lg font-semibold text-[var(--dark)]">Connexion</h1>
           <p className="mt-1 text-sm text-[var(--gray)]">Accédez à votre compte</p>
