@@ -26,11 +26,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 flex-shrink-0 flex flex-col" style={{ backgroundColor: "#8ecaa0" }}>
-        <div className="p-6 border-b" style={{ borderColor: "#f5f0e1" }}>
+        <div className="p-6 border-b" style={{ borderColor: "#2c2c2c33" }}>
           <Link href="/">
             <Image src="/logo.png" alt="La Bande à Misa" width={160} height={64} className="h-auto" priority />
           </Link>
-          <p className="text-xs mt-2 font-medium" style={{ color: "#f5f0e1" }}>Administration</p>
+          <p className="text-xs mt-2 font-medium" style={{ color: "#2c2c2c" }}>Administration</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -39,7 +39,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               key={item.href}
               href={item.href}
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group hover:bg-white/20"
-              style={{ color: "#f5f0e1" }}
+              style={{ color: "#2c2c2c" }}
             >
               <item.icon className="h-5 w-5" />
               <span className="text-sm font-medium">{item.label}</span>
@@ -48,13 +48,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           ))}
         </nav>
 
-        <div className="p-4 border-t" style={{ borderColor: "#f5f0e1" }}>
+        <div className="p-4 border-t" style={{ borderColor: "#2c2c2c33" }}>
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold" style={{ backgroundColor: "#f5f0e1", color: "#8ecaa0" }}>
+            <div className="h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold" style={{ backgroundColor: "#2c2c2c", color: "#8ecaa0" }}>
               {session.user?.name?.[0] ?? session.user?.email?.[0] ?? "A"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: "#f5f0e1" }}>{session.user?.name ?? "Admin"}</p>
+              <p className="text-sm font-medium truncate" style={{ color: "#2c2c2c" }}>{session.user?.name ?? "Admin"}</p>
               <p className="text-xs truncate" style={{ color: "#f5f0e1", opacity: 0.75 }}>{session.user?.email}</p>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <button
               type="submit"
               className="flex w-full items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm hover:bg-white/20"
-              style={{ color: "#f5f0e1" }}
+              style={{ color: "#2c2c2c" }}
             >
               <LogOut className="h-4 w-4" />
               Déconnexion
