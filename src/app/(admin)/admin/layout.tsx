@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { LayoutDashboard, Package, ShoppingBag, Users, Settings, LogOut, ChevronRight, Tag, Scissors } from "lucide-react"
 import { signOut } from "@/lib/auth"
 
@@ -24,10 +25,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-gray-900 text-white flex flex-col">
-        <div className="p-6 border-b border-gray-800">
-          <Link href="/" className="font-[family-name:var(--font-playfair)] text-xl font-bold text-white">La Bande à Misa</Link>
-          <p className="text-xs text-gray-400 mt-0.5">Administration</p>
+      <aside className="w-64 flex-shrink-0 text-white flex flex-col" style={{ backgroundColor: "#1a2e4a" }}>
+        <div className="p-6 border-b" style={{ borderColor: "#8ecaa0" }}>
+          <Link href="/">
+            <Image src="/logo.png" alt="La Bande à Misa" width={160} height={64} className="h-auto" priority />
+          </Link>
+          <p className="text-xs mt-2 font-medium" style={{ color: "#8ecaa0" }}>Administration</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -35,7 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors group"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group text-white/70 hover:text-white hover:bg-white/10"
             >
               <item.icon className="h-5 w-5" />
               <span className="text-sm font-medium">{item.label}</span>
@@ -44,20 +47,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t" style={{ borderColor: "#8ecaa0" }}>
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center text-sm font-semibold">
+            <div className="h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold" style={{ backgroundColor: "#8ecaa0", color: "#1a2e4a" }}>
               {session.user?.name?.[0] ?? session.user?.email?.[0] ?? "A"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{session.user?.name ?? "Admin"}</p>
-              <p className="text-xs text-gray-400 truncate">{session.user?.email}</p>
+              <p className="text-xs truncate" style={{ color: "#8ecaa0" }}>{session.user?.email}</p>
             </div>
           </div>
           <form action={async () => { "use server"; await signOut({ redirectTo: "/" }) }}>
             <button
               type="submit"
-              className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors text-sm"
+              className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-white/60 hover:text-white transition-colors text-sm"
             >
               <LogOut className="h-4 w-4" />
               Déconnexion
