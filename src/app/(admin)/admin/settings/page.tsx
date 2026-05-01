@@ -8,30 +8,51 @@ type HomepageSettings = {
   banner_image: string
 }
 
+type ThemeSettings = {
+  header_stripe_color: string
+}
+
 const defaultSettings: HomepageSettings = {
   banner_image: "",
 }
 
+const defaultTheme: ThemeSettings = {
+  header_stripe_color: "#8ecaa0",
+}
+
 export default function SettingsPage() {
   const [settings, setSettings] = useState<HomepageSettings>(defaultSettings)
+  const [theme, setTheme] = useState<ThemeSettings>(defaultTheme)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
 
   useEffect(() => {
-    fetch("/api/admin/settings/homepage")
-      .then((r) => r.json())
-      .then((data) => { setSettings({ ...defaultSettings, ...data }); setLoading(false) })
+    Promise.all([
+      fetch("/api/admin/settings/homepage").then((r) => r.json()),
+      fetch("/api/admin/settings/theme").then((r) => r.json()),
+    ]).then(([homepageData, themeData]) => {
+      setSettings({ ...defaultSettings, ...homepageData })
+      setTheme({ ...defaultTheme, ...themeData })
+      setLoading(false)
+    })
   }, [])
 
   const handleSave = async () => {
     setSaving(true)
-    await fetch("/api/admin/settings/homepage", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
-    })
+    await Promise.all([
+      fetch("/api/admin/settings/homepage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      }),
+      fetch("/api/admin/settings/theme", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(theme),
+      }),
+    ])
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -82,6 +103,37 @@ export default function SettingsPage() {
           ✓ Modifications sauvegardées — la page d'accueil est mise à jour
         </div>
       )}
+
+      {/* Thème */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4 mb-6">
+        <h2 className="font-semibold text-gray-900">Thème du header</h2>
+        <div>
+          <label className={labelClass}>Couleur des bandes</label>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={theme.header_stripe_color}
+              onChange={(e) => setTheme((t) => ({ ...t, header_stripe_color: e.target.value }))}
+              className="h-10 w-14 cursor-pointer rounded-lg border border-gray-300 p-1"
+            />
+            <input
+              type="text"
+              value={theme.header_stripe_color}
+              onChange={(e) => setTheme((t) => ({ ...t, header_stripe_color: e.target.value }))}
+              className={`${inputClass} w-36 font-mono`}
+              placeholder="#8ecaa0"
+              maxLength={7}
+            />
+            <div
+              className="h-10 flex-1 rounded-lg border border-gray-200"
+              style={{
+                background: `repeating-linear-gradient(90deg, ${theme.header_stripe_color} 0px, ${theme.header_stripe_color} 30px, #f5f0e1 30px, #f5f0e1 60px)`,
+              }}
+            />
+          </div>
+          <p className="mt-2 text-xs text-gray-400">Aperçu des bandes en temps réel. Cliquez sur "Sauvegarder" pour appliquer sur le site.</p>
+        </div>
+      </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
         <h2 className="font-semibold text-gray-900">Page d'accueil</h2>

@@ -9,9 +9,10 @@ import { useSession, signOut } from "next-auth/react"
 
 interface Props {
   categories: { name: string; slug: string }[]
+  stripeColor: string
 }
 
-export function HeaderClient({ categories }: Props) {
+export function HeaderClient({ categories, stripeColor }: Props) {
   const { totalItems, toggleCart } = useCartStore()
   const { data: session } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -35,7 +36,7 @@ export function HeaderClient({ categories }: Props) {
         <div
           className="relative"
           style={{
-            background: "repeating-linear-gradient(90deg, #8ecaa0 0px, #8ecaa0 120px, #f5f0e1 120px, #f5f0e1 240px)",
+            background: `repeating-linear-gradient(90deg, ${stripeColor} 0px, ${stripeColor} 120px, #f5f0e1 120px, #f5f0e1 240px)`,
           }}
         >
         <div className="relative mx-auto max-w-7xl px-4">
