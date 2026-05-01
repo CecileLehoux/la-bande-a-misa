@@ -29,12 +29,20 @@ export function HeaderClient({ categories }: Props) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-[var(--cream)] border-b border-[var(--beige-dark)]">
-        <div className="relative h-20">
-          <div className="relative mx-auto max-w-7xl px-4 h-full flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-[var(--beige-dark)]">
 
-            {/* Gauche : hamburger (mobile) */}
-            <div className="flex items-center w-36">
+        {/* Barre principale : logo centré + icônes à droite */}
+        <div
+          className="relative"
+          style={{
+            background: "repeating-linear-gradient(90deg, #8ecaa0 0px, #8ecaa0 120px, #f5f0e1 120px, #f5f0e1 240px)",
+          }}
+        >
+        <div className="relative mx-auto max-w-7xl px-4">
+          <div className="flex items-center justify-between h-36">
+
+            {/* Gauche : hamburger mobile */}
+            <div className="flex items-center w-24 md:w-36">
               <button
                 className="md:hidden p-1 text-[var(--dark)] hover:opacity-60 transition-opacity"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -45,22 +53,22 @@ export function HeaderClient({ categories }: Props) {
             </div>
 
             {/* Centre : logo + tagline */}
-            <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5">
+            <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5">
               <Image
                 src="/logo.png"
                 alt="La Bande à Misa"
-                width={220}
-                height={44}
-                className="h-auto w-auto max-w-[140px] md:max-w-none md:h-9"
+                width={280}
+                height={112}
+                className="h-auto w-[160px] md:w-[260px]"
                 priority
               />
-              <span className="text-[8px] tracking-[0.18em] uppercase text-[var(--gray)] hidden md:block">
+              <span className="hidden md:block text-[9px] tracking-[0.3em] uppercase text-[var(--dark)]">
                 Créations cousues main
               </span>
             </Link>
 
             {/* Droite : icônes */}
-            <div className="flex items-center gap-1 w-36 justify-end">
+            <div className="flex items-center gap-1 w-24 md:w-36 justify-end">
               <Link
                 href="/products"
                 className="hidden md:block p-2 text-[var(--dark)] hover:opacity-60 transition-opacity"
@@ -130,16 +138,17 @@ export function HeaderClient({ categories }: Props) {
             </div>
           </div>
         </div>
+        </div>
 
-        {/* Nav catégories — sous la barre principale */}
-        <div className="hidden md:block border-t border-[var(--beige)]">
+        {/* Nav desktop */}
+        <div className="hidden md:block border-t border-[var(--beige-dark)] bg-[var(--cream)]">
           <div className="mx-auto max-w-7xl px-4">
-            <nav className="flex justify-center gap-10 h-9 items-center">
+            <nav className="flex justify-center gap-8 h-10 items-center">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-[11px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity"
+                  className="text-[10px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity whitespace-nowrap"
                 >
                   {link.label}
                 </Link>
@@ -151,7 +160,7 @@ export function HeaderClient({ categories }: Props) {
 
       {/* Menu mobile */}
       {mobileMenuOpen && (
-        <div className="fixed inset-x-0 top-0 z-40 bg-[var(--cream)] border-b border-[var(--beige-dark)] pt-16">
+        <div className="fixed inset-x-0 top-0 z-40 bg-[var(--cream)] border-b border-[var(--beige-dark)] pt-20">
           <nav className="px-6 py-4 flex flex-col">
             {navLinks.map((link) => (
               <Link
