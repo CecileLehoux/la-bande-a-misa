@@ -7,18 +7,20 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Image from "next/image"
-import { ShoppingBag, Lock, ChevronLeft, User } from "lucide-react"
+import { ShoppingBag, Lock, ChevronLeft, User, Truck, MapPin } from "lucide-react"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
+
+type ShippingMethod = "delivery" | "pickup"
 
 const checkoutSchema = z.object({
   email: z.string().email("Email invalide"),
   firstName: z.string().min(2, "Prénom requis"),
   lastName: z.string().min(2, "Nom requis"),
-  address1: z.string().min(5, "Adresse requise"),
+  address1: z.string().optional(),
   address2: z.string().optional(),
-  city: z.string().min(2, "Ville requise"),
-  postalCode: z.string().regex(/^\d{5}$/, "Code postal invalide (5 chiffres)"),
+  city: z.string().optional(),
+  postalCode: z.string().optional(),
   country: z.string().min(1),
   phone: z.string().optional(),
 })
@@ -48,6 +50,7 @@ export default function CheckoutPage() {
   const { data: session, status } = useSession()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("delivery")
 
   const {
     register,
@@ -59,20 +62,31 @@ export default function CheckoutPage() {
     defaultValues: { country: "FR" },
   })
 
-  // Pré-remplir l'email si connecté
   useEffect(() => {
     if (session?.user?.email) {
       setValue("email", session.user.email)
     }
   }, [session, setValue])
 
-  const shippingCost = 4.99
+  const shippingCost = shippingMethod === "delivery" ? 4.99 : 0
   const total = subtotal() + shippingCost
 
   const inputClass =
     "w-full rounded-lg border border-[var(--beige-dark)] bg-white px-3.5 py-2.5 text-sm text-[var(--dark)] placeholder-[var(--gray-light)] focus:outline-none focus:border-[var(--dark)] transition-colors"
 
   const onSubmit = async (data: CheckoutForm) => {
+    // Validation adresse si livraison
+    if (shippingMethod === "delivery") {
+      if (!data.address1 || !data.city || !data.postalCode) {
+        setError("Veuillez remplir tous les champs d'adresse pour la livraison.")
+        return
+      }
+      if (!/^\d{5}$/.test(data.postalCode ?? "")) {
+        setError("Code postal invalide (5 chiffres requis).")
+        return
+      }
+    }
+
     setLoading(true)
     setError("")
 
@@ -82,8 +96,11 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items,
-          shippingAddress: data,
+          shippingAddress: shippingMethod === "delivery" ? data : null,
           email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          shippingMethod,
         }),
       })
 
@@ -93,10 +110,7 @@ export default function CheckoutPage() {
       }
 
       const { sessionUrl } = await res.json()
-
-      if (sessionUrl) {
-        window.location.href = sessionUrl
-      }
+      if (sessionUrl) window.location.href = sessionUrl
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur lors du paiement")
     } finally {
@@ -141,7 +155,8 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* Formulaire */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Encart connexion — visible uniquement si non connecté */}
+
+            {/* Encart connexion */}
             {status !== "loading" && !session && (
               <div className="rounded-2xl border border-[var(--beige-dark)] bg-white p-5">
                 <div className="flex items-start gap-3">
@@ -171,9 +186,62 @@ export default function CheckoutPage() {
                 </p>
               </div>
             )}
+
+            {/* Choix du mode de livraison */}
+            <div className="rounded-2xl border border-[var(--beige-dark)] bg-white p-6">
+              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)] mb-4">
+                Mode de livraison
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Livraison */}
+                <button
+                  type="button"
+                  onClick={() => setShippingMethod("delivery")}
+                  className={`flex flex-col items-start gap-2 rounded-xl border-2 p-4 text-left transition-all ${
+                    shippingMethod === "delivery"
+                      ? "border-[var(--dark)] bg-[var(--beige)]"
+                      : "border-[var(--beige-dark)] hover:border-[var(--gray-light)]"
+                  }`}
+                >
+                  <Truck className="h-5 w-5 text-[var(--dark)]" />
+                  <div>
+                    <p className="text-sm font-medium text-[var(--dark)]">Livraison</p>
+                    <p className="text-xs text-[var(--gray)]">4,99 €</p>
+                  </div>
+                </button>
+
+                {/* Retrait atelier */}
+                <button
+                  type="button"
+                  onClick={() => setShippingMethod("pickup")}
+                  className={`flex flex-col items-start gap-2 rounded-xl border-2 p-4 text-left transition-all ${
+                    shippingMethod === "pickup"
+                      ? "border-[var(--dark)] bg-[var(--beige)]"
+                      : "border-[var(--beige-dark)] hover:border-[var(--gray-light)]"
+                  }`}
+                >
+                  <MapPin className="h-5 w-5 text-[var(--dark)]" />
+                  <div>
+                    <p className="text-sm font-medium text-[var(--dark)]">Retrait à l&apos;atelier</p>
+                    <p className="text-xs text-[var(--terracotta)] font-medium">Gratuit</p>
+                  </div>
+                </button>
+              </div>
+
+              {shippingMethod === "pickup" && (
+                <div className="mt-4 rounded-xl bg-[var(--beige)] p-4">
+                  <p className="text-xs text-[var(--gray)] leading-relaxed">
+                    📍 <span className="font-medium text-[var(--dark)]">Retrait à l&apos;atelier de Misa</span><br />
+                    Nous vous contacterons pour convenir d&apos;un créneau de retrait.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Informations */}
             <div className="rounded-2xl border border-[var(--beige-dark)] bg-white p-6">
               <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)] mb-5">
-                Informations de livraison
+                {shippingMethod === "delivery" ? "Informations de livraison" : "Vos informations"}
               </h2>
               <div className="space-y-4">
                 <Field label="Email *" error={errors.email?.message}>
@@ -194,22 +262,26 @@ export default function CheckoutPage() {
                   </Field>
                 </div>
 
-                <Field label="Adresse *" error={errors.address1?.message}>
-                  <input placeholder="12 rue de la Paix" className={inputClass} {...register("address1")} />
-                </Field>
+                {shippingMethod === "delivery" && (
+                  <>
+                    <Field label="Adresse *" error={errors.address1?.message}>
+                      <input placeholder="12 rue de la Paix" className={inputClass} {...register("address1")} />
+                    </Field>
 
-                <Field label="Complément d'adresse" error={errors.address2?.message}>
-                  <input placeholder="Appartement, étage..." className={inputClass} {...register("address2")} />
-                </Field>
+                    <Field label="Complément d'adresse" error={errors.address2?.message}>
+                      <input placeholder="Appartement, étage..." className={inputClass} {...register("address2")} />
+                    </Field>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Code postal *" error={errors.postalCode?.message}>
-                    <input placeholder="75001" className={inputClass} {...register("postalCode")} />
-                  </Field>
-                  <Field label="Ville *" error={errors.city?.message}>
-                    <input placeholder="Paris" className={inputClass} {...register("city")} />
-                  </Field>
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Code postal *" error={errors.postalCode?.message}>
+                        <input placeholder="75001" className={inputClass} {...register("postalCode")} />
+                      </Field>
+                      <Field label="Ville *" error={errors.city?.message}>
+                        <input placeholder="Paris" className={inputClass} {...register("city")} />
+                      </Field>
+                    </div>
+                  </>
+                )}
 
                 <Field label="Téléphone" error={errors.phone?.message}>
                   <input type="tel" placeholder="+33 6 00 00 00 00" className={inputClass} {...register("phone")} />
@@ -278,8 +350,12 @@ export default function CheckoutPage() {
                   <span className="text-[var(--dark)]">{formatPrice(subtotal())}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--gray)]">Livraison</span>
-                  <span className="text-[var(--dark)]">{formatPrice(shippingCost)}</span>
+                  <span className="text-[var(--gray)]">
+                    {shippingMethod === "pickup" ? "Retrait à l'atelier" : "Livraison"}
+                  </span>
+                  <span className={shippingMethod === "pickup" ? "text-[var(--terracotta)] font-medium" : "text-[var(--dark)]"}>
+                    {shippingMethod === "pickup" ? "Gratuit" : formatPrice(shippingCost)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-[var(--dark)] pt-2 border-t border-[var(--beige)]">
                   <span>Total</span>

@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const origin = req.headers.get("origin") ?? req.headers.get("referer")?.split("/").slice(0, 3).join("/") ?? ""
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || origin
   const body = await req.json()
-  const { items, shippingAddress, email } = body as {
+  const { items, shippingAddress, email, firstName, lastName, shippingMethod } = body as {
     items: CartItem[]
     shippingAddress: {
       firstName: string
@@ -21,8 +21,11 @@ export async function POST(req: Request) {
       postalCode: string
       country: string
       phone?: string
-    }
+    } | null
     email: string
+    firstName: string
+    lastName: string
+    shippingMethod: "delivery" | "pickup"
   }
 
   if (!items || items.length === 0) {
@@ -62,7 +65,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const shippingCost = 4.99
+  const shippingCost = shippingMethod === "pickup" ? 0 : 4.99
   const total = subtotal + shippingCost
   const orderNumber = generateOrderNumber()
 
@@ -73,9 +76,9 @@ export async function POST(req: Request) {
     if (userExists) validUserId = session.user.id
   }
 
-  // Create address if user is logged in
+  // Create address if user is logged in and delivery mode
   let addressId: string | undefined
-  if (validUserId) {
+  if (validUserId && shippingAddress && shippingMethod === "delivery") {
     try {
       const address = await prisma.address.create({
         data: {
@@ -134,6 +137,11 @@ export async function POST(req: Request) {
       quantity: 1,
     })
   }
+  // Store shipping method in order notes
+  await prisma.order.update({
+    where: { id: order.id },
+    data: { notes: shippingMethod === "pickup" ? "Retrait à l'atelier" : null },
+  })
 
   // Mock mode: skip Stripe when keys are not configured
   const stripeKey = process.env.STRIPE_SECRET_KEY ?? ""
