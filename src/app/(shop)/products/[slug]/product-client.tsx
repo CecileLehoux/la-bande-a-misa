@@ -174,7 +174,7 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
             )}
 
             <p className="text-[11px] text-[var(--gray)] italic">
-              Chaque pièce est cousue à la main — de légères variations peuvent exister, elles font partie de son unicité.
+              Chaque pièce est cousue à la main, emballée avec soin.
             </p>
           </div>
         </div>
