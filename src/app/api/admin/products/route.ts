@@ -41,5 +41,6 @@ export async function POST(req: Request) {
 
   revalidatePath("/")
   revalidatePath("/products")
+  revalidatePath(`/products/${product.slug}`)
   return NextResponse.json(product, { status: 201 })
 }
