@@ -45,6 +45,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   revalidatePath("/")
   revalidatePath("/products")
+  revalidatePath(`/products/${product.slug}`)
   return NextResponse.json(product)
 }
 
@@ -53,8 +54,10 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 403 })
 
   const { id } = await params
+  const product = await prisma.product.findUnique({ where: { id }, select: { slug: true } })
   await prisma.product.delete({ where: { id } })
   revalidatePath("/")
   revalidatePath("/products")
+  if (product) revalidatePath(`/products/${product.slug}`)
   return NextResponse.json({ success: true })
 }
