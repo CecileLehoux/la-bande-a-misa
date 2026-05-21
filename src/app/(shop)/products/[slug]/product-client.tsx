@@ -134,9 +134,7 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
             <div className="border-t border-[var(--beige-dark)]" />
 
             <p className="text-xs text-[var(--gray)]">
-              {product.stock === 0
-                ? "Actuellement épuisé"
-                : "En stock — expédition sous 3-5 jours"}
+              En stock — expédition sous 3-5 jours
             </p>
 
             {sizes.length > 0 && (
