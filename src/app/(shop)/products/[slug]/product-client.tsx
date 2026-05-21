@@ -136,8 +136,6 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
             <p className="text-xs text-[var(--gray)]">
               {product.stock === 0
                 ? "Actuellement épuisé"
-                : product.stock <= product.lowStockAt
-                ? `Plus que ${product.stock} disponible${product.stock > 1 ? "s" : ""}`
                 : "En stock — expédition sous 3-5 jours"}
             </p>
 
