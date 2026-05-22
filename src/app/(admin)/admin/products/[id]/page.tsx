@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ProductForm } from "@/components/admin/product-form"
+import { getPartnerFields } from "@/lib/db-raw"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Modifier produit - Admin" }
@@ -21,10 +22,13 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
   if (!product) notFound()
 
+  const partnerFields = await getPartnerFields(id)
+  const productWithPartner = { ...product, ...partnerFields }
+
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Modifier : {product.name}</h1>
-      <ProductForm product={product} categories={categories} />
+      <ProductForm product={productWithPartner} categories={categories} />
     </div>
   )
 }
