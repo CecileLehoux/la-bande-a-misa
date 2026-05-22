@@ -132,7 +132,7 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
             </div>
 
             {product.description && (
-              <p className="text-sm text-[var(--gray)] leading-relaxed">{product.description}</p>
+              <p className="text-sm text-[var(--gray)] leading-relaxed whitespace-pre-line">{product.description}</p>
             )}
 
             {product.partnerName && (
