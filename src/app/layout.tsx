@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     default: "La Bande à Misa — Créations cousues main",
     template: "%s | La Bande à Misa",
   },
-  description: "Accessoires cousus main pour chiens, chats et humains. Bandanas, chouchous et créations artisanales fabriquées avec amour.",
+  description: "Cabas, trousses et créations cousues main pour ajouter une touche de pep's au quotidien.",
   metadataBase: new URL(baseUrl),
   openGraph: {
     siteName: "La Bande à Misa",

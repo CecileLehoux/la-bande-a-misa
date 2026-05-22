@@ -5,10 +5,10 @@ import { Plus, Minus } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Boutique",
-  description: "Découvrez toutes nos créations cousues main — bandanas, chouchous et accessoires pour chiens, chats et humains.",
+  description: "Cabas, trousses et créations cousues main pour ajouter une touche de pep's au quotidien.",
   openGraph: {
     title: "Boutique | La Bande à Misa",
-    description: "Découvrez toutes nos créations cousues main — bandanas, chouchous et accessoires pour chiens, chats et humains.",
+    description: "Cabas, trousses et créations cousues main pour ajouter une touche de pep's au quotidien.",
     url: "/products",
     type: "website",
   },
