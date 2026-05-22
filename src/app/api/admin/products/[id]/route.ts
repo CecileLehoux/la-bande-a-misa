@@ -17,33 +17,40 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const body = await req.json()
   const { images, categoryIds, categoryId: _legacy, ...data } = body
 
-  const product = await prisma.product.update({
-    where: { id },
-    data: {
-      ...data,
-      comparePrice: data.comparePrice || null,
-      cost: data.cost || null,
-      weight: data.weight || null,
-      partnerName: data.partnerName || null,
-      partnerUrl: data.partnerUrl || null,
-      images: images !== undefined
-        ? {
-            deleteMany: {},
-            create: images.map((img: { url: string; alt: string }, i: number) => ({
-              url: img.url,
-              alt: img.alt,
-              sortOrder: i,
-            })),
-          }
-        : undefined,
-      categories: categoryIds !== undefined
-        ? {
-            deleteMany: {},
-            create: (categoryIds as string[]).map((cid) => ({ categoryId: cid })),
-          }
-        : undefined,
-    },
-  })
+  let product
+  try {
+    product = await prisma.product.update({
+      where: { id },
+      data: {
+        ...data,
+        comparePrice: data.comparePrice || null,
+        cost: data.cost || null,
+        weight: data.weight || null,
+        partnerName: data.partnerName || null,
+        partnerUrl: data.partnerUrl || null,
+        images: images !== undefined
+          ? {
+              deleteMany: {},
+              create: images.map((img: { url: string; alt: string }, i: number) => ({
+                url: img.url,
+                alt: img.alt,
+                sortOrder: i,
+              })),
+            }
+          : undefined,
+        categories: categoryIds !== undefined
+          ? {
+              deleteMany: {},
+              create: (categoryIds as string[]).map((cid) => ({ categoryId: cid })),
+            }
+          : undefined,
+      },
+    })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error("Prisma update error:", message)
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 
   revalidatePath("/")
   revalidatePath("/products")
