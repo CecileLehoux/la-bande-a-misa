@@ -32,7 +32,12 @@ const productSchema = z.object({
 type ProductFormData = z.output<typeof productSchema>
 
 interface ProductFormProps {
-  product?: Product & { images: ProductImage[]; categories: ProductCategory[] }
+  product?: Product & {
+    images: ProductImage[]
+    categories: ProductCategory[]
+    partnerName?: string | null
+    partnerUrl?: string | null
+  }
   categories: Category[]
 }
 
