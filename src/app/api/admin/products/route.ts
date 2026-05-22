@@ -26,6 +26,8 @@ export async function POST(req: Request) {
       comparePrice: data.comparePrice || null,
       cost: data.cost || null,
       weight: data.weight || null,
+      partnerName: data.partnerName || null,
+      partnerUrl: data.partnerUrl || null,
       images: {
         create: images?.map((img: { url: string; alt: string }, i: number) => ({
           url: img.url,

@@ -25,6 +25,8 @@ const productSchema = z.object({
   weight: z.coerce.number().optional(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
+  partnerName: z.string().optional(),
+  partnerUrl: z.string().optional(),
 })
 
 type ProductFormData = z.output<typeof productSchema>
@@ -82,6 +84,8 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       weight: product?.weight ?? undefined,
       isActive: product?.isActive ?? true,
       isFeatured: product?.isFeatured ?? false,
+      partnerName: product?.partnerName ?? "",
+      partnerUrl: product?.partnerUrl ?? "",
     },
   })
 
@@ -202,6 +206,15 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                 rows={5}
                 {...register("description")}
               />
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+            <h2 className="font-semibold text-gray-900">Collaboration (optionnel)</h2>
+            <p className="text-xs text-gray-400">Si ce produit est créé en partenariat avec une autre marque, renseignez son nom et son site.</p>
+            <div className="grid grid-cols-2 gap-4">
+              <Input label="Nom du partenaire" placeholder="Autre Marque" {...register("partnerName")} />
+              <Input label="URL du site partenaire" placeholder="https://www.autremarque.fr" {...register("partnerUrl")} />
             </div>
           </div>
 

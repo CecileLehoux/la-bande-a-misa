@@ -135,6 +135,24 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
               <p className="text-sm text-[var(--gray)] leading-relaxed">{product.description}</p>
             )}
 
+            {product.partnerName && (
+              <p className="text-xs text-[var(--gray)]">
+                En collaboration avec{" "}
+                {product.partnerUrl ? (
+                  <a
+                    href={product.partnerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-[var(--terracotta)] transition-colors"
+                  >
+                    {product.partnerName}
+                  </a>
+                ) : (
+                  <span className="font-medium">{product.partnerName}</span>
+                )}
+              </p>
+            )}
+
             <div className="border-t border-[var(--beige-dark)]" />
 
             <p className="text-xs text-[var(--gray)]">

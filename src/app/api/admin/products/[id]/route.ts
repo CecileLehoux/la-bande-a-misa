@@ -24,6 +24,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       comparePrice: data.comparePrice || null,
       cost: data.cost || null,
       weight: data.weight || null,
+      partnerName: data.partnerName || null,
+      partnerUrl: data.partnerUrl || null,
       images: images !== undefined
         ? {
             deleteMany: {},
