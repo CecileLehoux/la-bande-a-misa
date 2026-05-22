@@ -4,6 +4,8 @@ export type ProductWithImages = Product & {
   images: ProductImage[]
   categories: { category: Category }[]
   _count?: { reviews: number }
+  partnerName?: string | null
+  partnerUrl?: string | null
 }
 
 export type ProductWithDetails = ProductWithImages & {
