@@ -10,6 +10,7 @@ import type { ProductWithDetails } from "@/types"
 
 export function ProductClient({ product }: { product: ProductWithDetails }) {
   const sizes: string[] = product.sizes ? JSON.parse(product.sizes) : []
+  const sizePrices: Record<string, number> = product.sizePrices ? JSON.parse(product.sizePrices) : {}
 
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -17,7 +18,10 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const { addItem, openCart } = useCartStore()
 
-  const discount = calculateDiscount(product.price, product.comparePrice ?? 0)
+  // Prix effectif selon la taille sélectionnée
+  const effectivePrice = (selectedSize && sizePrices[selectedSize]) ? sizePrices[selectedSize] : product.price
+
+  const discount = calculateDiscount(effectivePrice, product.comparePrice ?? 0)
   const mainImage = product.images[selectedImage]?.url
   const total = product.images.length
 
@@ -30,7 +34,7 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
       id: selectedSize ? `${product.id}_${selectedSize}` : product.id,
       productId: product.id,
       name: product.name,
-      price: product.price,
+      price: effectivePrice,
       image: product.images[0]?.url ?? null,
       quantity,
       stock: product.stock,
@@ -118,8 +122,8 @@ export function ProductClient({ product }: { product: ProductWithDetails }) {
             </div>
 
             <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-medium text-[var(--dark)]">{formatPrice(product.price)}</span>
-              {product.comparePrice && product.comparePrice > product.price && (
+              <span className="text-2xl font-medium text-[var(--dark)]">{formatPrice(effectivePrice)}</span>
+              {product.comparePrice && product.comparePrice > effectivePrice && (
                 <>
                   <span className="text-base text-[var(--gray)] line-through">{formatPrice(product.comparePrice)}</span>
                   <span className="text-sm text-[var(--terracotta)]">-{discount}%</span>

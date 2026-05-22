@@ -48,6 +48,9 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   const [sizes, setSizes] = useState<string[]>(
     product?.sizes ? JSON.parse(product.sizes) : []
   )
+  const [sizePrices, setSizePrices] = useState<Record<string, number>>(
+    product?.sizePrices ? JSON.parse(product.sizePrices) : {}
+  )
   const [newSize, setNewSize] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [uploading, setUploading] = useState(false)
@@ -88,7 +91,13 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setSaving(true)
     setError("")
 
-    const payload = { ...data, images, categoryIds: selectedCategoryIds, sizes: JSON.stringify(sizes) }
+    const payload = {
+      ...data,
+      images,
+      categoryIds: selectedCategoryIds,
+      sizes: JSON.stringify(sizes),
+      sizePrices: Object.keys(sizePrices).length > 0 ? JSON.stringify(sizePrices) : null,
+    }
 
     const url = product ? `/api/admin/products/${product.id}` : "/api/admin/products"
     const method = product ? "PATCH" : "POST"
@@ -342,19 +351,40 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             <h2 className="font-semibold text-gray-900">Tailles disponibles</h2>
             <p className="text-xs text-gray-400">Laissez vide si le produit n'a pas de tailles</p>
             {sizes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-2">
                 {sizes.map((size) => (
-                  <span key={size} className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">
-                    {size}
-                    <button
-                      type="button"
-                      onClick={() => setSizes(sizes.filter((s) => s !== size))}
-                      className="ml-0.5 text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      ×
-                    </button>
-                  </span>
+                  <div key={size} className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 w-24 shrink-0">
+                      {size}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSizes(sizes.filter((s) => s !== size))
+                          setSizePrices((prev) => { const next = { ...prev }; delete next[size]; return next })
+                        }}
+                        className="ml-0.5 text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </span>
+                    <div className="flex items-center gap-1 flex-1">
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={sizePrices[size] ?? ""}
+                        onChange={(e) => setSizePrices((prev) => ({
+                          ...prev,
+                          [size]: parseFloat(e.target.value) || 0,
+                        }))}
+                        placeholder={`Prix pour ${size} (optionnel)`}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                      />
+                      <span className="text-sm text-gray-400">€</span>
+                    </div>
+                  </div>
                 ))}
+                <p className="text-xs text-gray-400">Si pas de prix défini pour une taille, le prix de base est utilisé.</p>
               </div>
             )}
             <div className="flex gap-2">

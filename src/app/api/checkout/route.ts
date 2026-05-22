@@ -51,15 +51,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Stock insuffisant pour: ${product.name}` }, { status: 400 })
     }
 
-    subtotal += product.price * item.quantity
+    // Utilise le prix par taille s'il existe
+    const sizePrices: Record<string, number> = product.sizePrices ? JSON.parse(product.sizePrices) : {}
+    const unitPrice = (item.size && sizePrices[item.size]) ? sizePrices[item.size] : product.price
+
+    subtotal += unitPrice * item.quantity
     lineItems.push({
       price_data: {
         currency: "eur",
         product_data: {
-          name: product.name,
+          name: product.name + (item.size ? ` — ${item.size}` : ""),
           images: product.images[0]?.url?.startsWith("https://") ? [product.images[0].url] : [],
         },
-        unit_amount: Math.round(product.price * 100),
+        unit_amount: Math.round(unitPrice * 100),
       },
       quantity: item.quantity,
     })
@@ -112,14 +116,16 @@ export async function POST(req: Request) {
       items: {
         create: items.map((item) => {
           const product = products.find((p) => p.id === item.productId)!
+          const sp: Record<string, number> = product.sizePrices ? JSON.parse(product.sizePrices) : {}
+          const price = (item.size && sp[item.size]) ? sp[item.size] : product.price
           return {
             productId: item.productId,
             name: product.name,
             image: item.image,
             size: item.size ?? null,
-            price: product.price,
+            price,
             quantity: item.quantity,
-            total: product.price * item.quantity,
+            total: price * item.quantity,
           }
         }),
       },
