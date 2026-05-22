@@ -120,8 +120,12 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setSaving(false)
 
     if (!res.ok) {
-      const err = await res.json()
-      setError(err.error ?? "Erreur lors de la sauvegarde")
+      try {
+        const err = await res.json()
+        setError(err.error ?? "Erreur lors de la sauvegarde")
+      } catch {
+        setError(`Erreur serveur (${res.status})`)
+      }
       return
     }
 
