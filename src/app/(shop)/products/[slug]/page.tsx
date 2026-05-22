@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { ProductClient } from "./product-client"
+import { getPartnerFields } from "@/lib/db-raw"
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://labandeamisa.fr"
 
@@ -65,6 +66,9 @@ export default async function ProductPage(
   const product = await getProduct(slug)
   if (!product) notFound()
 
+  const partnerFields = await getPartnerFields(product.id)
+  const productWithPartner = { ...product, ...partnerFields }
+
   const approvedReviews = product.reviews.filter((r) => r.isApproved)
   const avgRating = approvedReviews.length
     ? approvedReviews.reduce((sum, r) => sum + r.rating, 0) / approvedReviews.length
@@ -107,7 +111,7 @@ export default async function ProductPage(
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ProductClient product={product} />
+      <ProductClient product={productWithPartner} />
     </>
   )
 }
