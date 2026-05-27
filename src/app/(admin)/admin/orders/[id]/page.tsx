@@ -111,8 +111,18 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
           <div className="rounded-xl border border-gray-200 bg-white p-6">
             <h2 className="font-semibold mb-3">Paiement</h2>
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${order.paymentStatus === "PAID" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>
-              {order.paymentStatus === "PAID" ? "Payé" : "En attente"}
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              order.paymentStatus === "PAID" ? "bg-green-100 text-green-800" :
+              order.paymentStatus === "REFUNDED" ? "bg-purple-100 text-purple-800" :
+              order.paymentStatus === "PARTIALLY_REFUNDED" ? "bg-orange-100 text-orange-800" :
+              order.paymentStatus === "FAILED" ? "bg-red-100 text-red-800" :
+              "bg-yellow-100 text-yellow-800"
+            }`}>
+              {order.paymentStatus === "PAID" ? "Payé" :
+               order.paymentStatus === "REFUNDED" ? "Remboursé" :
+               order.paymentStatus === "PARTIALLY_REFUNDED" ? "Partiellement remboursé" :
+               order.paymentStatus === "FAILED" ? "Échoué" :
+               "En attente"}
             </span>
             {order.paymentIntentId && (
               <p className="text-xs text-gray-400 mt-2 break-all">

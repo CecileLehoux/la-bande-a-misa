@@ -100,8 +100,18 @@ export default async function AdminOrdersPage({
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${order.paymentStatus === "PAID" ? "bg-green-100 text-green-800" : order.paymentStatus === "FAILED" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}`}>
-                    {order.paymentStatus === "PAID" ? "Payé" : order.paymentStatus === "FAILED" ? "Échoué" : "En attente"}
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    order.paymentStatus === "PAID" ? "bg-green-100 text-green-800" :
+                    order.paymentStatus === "REFUNDED" ? "bg-purple-100 text-purple-800" :
+                    order.paymentStatus === "PARTIALLY_REFUNDED" ? "bg-orange-100 text-orange-800" :
+                    order.paymentStatus === "FAILED" ? "bg-red-100 text-red-800" :
+                    "bg-yellow-100 text-yellow-800"
+                  }`}>
+                    {order.paymentStatus === "PAID" ? "Payé" :
+                     order.paymentStatus === "REFUNDED" ? "Remboursé" :
+                     order.paymentStatus === "PARTIALLY_REFUNDED" ? "Partiellement remboursé" :
+                     order.paymentStatus === "FAILED" ? "Échoué" :
+                     "En attente"}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-xs text-gray-400">{formatDateTime(order.createdAt)}</td>
