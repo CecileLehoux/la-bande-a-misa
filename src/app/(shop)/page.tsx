@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { getApprovedShopReviews } from "@/lib/db-raw"
 import { ProductCard } from "@/components/shop/product-card"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [/* featuredProducts */ , newProducts, bannerSetting] = await Promise.all([
+  const [/* featuredProducts */ , newProducts, bannerSetting, reviews] = await Promise.all([
     prisma.product.findMany({
       where: { isActive: true, isFeatured: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
@@ -31,9 +32,20 @@ export default async function HomePage() {
       orderBy: { sortOrder: "asc" },
     }),
     prisma.setting.findUnique({ where: { key: "banner_image" } }),
+    getApprovedShopReviews(3),
   ])
 
   const bannerSrc = bannerSetting?.value || "/banner.png"
+
+  // Fallback si pas encore d'avis approuvés
+  const fallbackReviews = [
+    { name: "Anna", comment: "Le tissu est vraiment doux, j'ai été surprise par la qualité. Et c'est beau en plus !", rating: 5 },
+    { name: "Lisa", comment: "Ça fait plusieurs mois que mon chien le porte, c'est toujours aussi solide. Très bonne surprise.", rating: 5 },
+    { name: "Laura", comment: "J'avais un peu peur de commander en ligne mais la qualité est vraiment au rendez-vous. Je rachèterai !", rating: 5 },
+  ]
+  const displayReviews = reviews.length > 0
+    ? reviews.map(r => ({ name: r.name ?? "Client", comment: r.comment ?? "", rating: r.rating ?? 5 }))
+    : fallbackReviews
 
   return (
     <div>
@@ -83,38 +95,17 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Coups de cœur — masqué pour l'instant */}
-      {/* {featuredProducts.length > 0 && (
-        <section className="py-14 bg-[var(--cream)]">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8 border-b border-[var(--beige-dark)] pb-4">
-              <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)]">Coups de cœur</h2>
-              <Link href="/products?featured=true" className="flex items-center gap-1 text-[11px] tracking-widest uppercase text-[var(--dark)] hover:opacity-50 transition-opacity">
-                Voir tout <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )} */}
-
       {/* Témoignages */}
       <section className="py-14 bg-[var(--beige)]">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <h2 className="text-[11px] tracking-widest uppercase text-[var(--dark)] mb-10 text-center">Ils en parlent</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {[
-              { name: "Anna", text: "Le tissu est vraiment doux, j'ai été surprise par la qualité. Et c'est beau en plus !" },
-              { name: "Lisa", text: "Ça fait plusieurs mois que mon chien le porte, c'est toujours aussi solide. Très bonne surprise." },
-              { name: "Laura", text: "J'avais un peu peur de commander en ligne mais la qualité est vraiment au rendez-vous. Je rachèterai !" },
-            ].map(({ name, text }) => (
-              <div key={name} className="bg-[var(--cream)] rounded-2xl px-6 py-7 flex flex-col gap-4">
-                <p className="text-xs text-[var(--terracotta)]">★★★★★</p>
-                <p className="text-sm text-[var(--gray)] leading-relaxed italic">&ldquo;{text}&rdquo;</p>
+            {displayReviews.map(({ name, comment, rating }, i) => (
+              <div key={i} className="bg-[var(--cream)] rounded-2xl px-6 py-7 flex flex-col gap-4">
+                <p className="text-xs text-[var(--terracotta)]">{"★".repeat(rating)}</p>
+                {comment && (
+                  <p className="text-sm text-[var(--gray)] leading-relaxed italic">&ldquo;{comment}&rdquo;</p>
+                )}
                 <p className="text-xs font-medium text-[var(--dark)] tracking-wide">{name}</p>
               </div>
             ))}

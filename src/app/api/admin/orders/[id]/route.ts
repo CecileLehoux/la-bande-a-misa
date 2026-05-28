@@ -6,6 +6,7 @@ import {
   sendOrderCancelledEmail,
   sendOrderDeliveredEmail,
 } from "@/lib/email"
+import { createShopReview } from "@/lib/db-raw"
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -40,9 +41,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       orderNumber: order.orderNumber,
     }).catch((err) => console.error("Erreur email annulation:", err))
   } else if (status === "DELIVERED") {
+    // Create a unique review token and save the review request
+    const token = crypto.randomUUID()
+    const reviewId = crypto.randomUUID()
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://labandeamisa.fr"
+    const reviewUrl = `${appUrl}/avis/${token}`
+
+    createShopReview({
+      id: reviewId,
+      token,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      email: order.email,
+    }).catch((err) => console.error("Erreur création review:", err))
+
     sendOrderDeliveredEmail({
       to: order.email,
       orderNumber: order.orderNumber,
+      reviewUrl,
     }).catch((err) => console.error("Erreur email livraison:", err))
   }
 

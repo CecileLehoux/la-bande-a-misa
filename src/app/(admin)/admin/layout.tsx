@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { LayoutDashboard, Package, ShoppingBag, Users, Settings, LogOut, ChevronRight, Tag, Scissors } from "lucide-react"
+import { LayoutDashboard, Package, ShoppingBag, Users, Settings, LogOut, ChevronRight, Tag, Scissors, Star } from "lucide-react"
 import { signOut } from "@/lib/auth"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: "/admin/atelier", icon: Scissors, label: "L'atelier" },
     { href: "/admin/orders", icon: ShoppingBag, label: "Commandes" },
     { href: "/admin/customers", icon: Users, label: "Clients" },
+    { href: "/admin/avis", icon: Star, label: "Avis clients" },
     { href: "/admin/settings", icon: Settings, label: "Paramètres" },
   ]
 

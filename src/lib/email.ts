@@ -300,24 +300,38 @@ export async function sendOrderCancelledEmail({
 export async function sendOrderDeliveredEmail({
   to,
   orderNumber,
+  reviewUrl,
 }: {
   to: string
   orderNumber: string
+  reviewUrl?: string
 }) {
+  const reviewBlock = reviewUrl ? `
+    <div style="margin:32px 0;text-align:center;">
+      <p style="margin:0 0 16px;line-height:1.7;color:#444;">
+        Votre commande vous plaît ? Votre avis nous aiderait beaucoup à faire connaître nos créations ✨
+      </p>
+      <a href="${reviewUrl}" style="display:inline-block;background-color:#8ecaa0;color:#2c2c2c;padding:14px 32px;border-radius:100px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:0.5px;">
+        Laisser un avis
+      </a>
+      <p style="margin:12px 0 0;font-size:12px;color:#aaa;">Cela prend moins d'une minute !</p>
+    </div>` : ""
+
   const html = emailWrapper(`
     <h2 style="margin:0 0 8px;font-size:20px;font-weight:400;">Votre commande est arrivée !</h2>
     <p style="margin:0 0 24px;color:#666;font-size:14px;">Commande n° <strong>${orderNumber}</strong></p>
     <p style="line-height:1.7;color:#444;">
       Bonjour,<br><br>
-      Nous espérons que votre commande vous plaît ! Si vous avez un moment, votre avis nous aiderait beaucoup à faire connaître nos créations.
+      Nous espérons que votre commande vous plaît et qu'elle vous apportera beaucoup de pep's au quotidien !
     </p>
+    ${reviewBlock}
     <p style="margin-top:32px;line-height:1.7;color:#666;font-size:14px;">
       Merci pour votre confiance et à bientôt !<br><br>
       <em>L'équipe La Bande à Misa</em>
     </p>
   `)
 
-  await sendEmail(to, `Votre commande n° ${orderNumber} a été livrée — donnez votre avis !`, html)
+  await sendEmail(to, `Votre commande n° ${orderNumber} est arrivée ! 🎉`, html)
 }
 
 export async function sendOrderRefundedEmail({

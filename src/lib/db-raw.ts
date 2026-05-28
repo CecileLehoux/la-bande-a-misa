@@ -1,6 +1,6 @@
 /**
- * Raw SQL helpers for fields not yet in the cached Prisma client on Vercel
- * (partnerName, partnerUrl added via ALTER TABLE after initial deploy)
+ * Raw SQL helpers — used for fields/tables added after the initial deploy
+ * to work around the stale Prisma client cache on Vercel.
  */
 import { createClient } from "@libsql/client"
 
@@ -10,6 +10,8 @@ function getDb() {
     authToken: process.env.TURSO_AUTH_TOKEN,
   })
 }
+
+// ─── Partner fields (products) ───────────────────────────────────────────────
 
 export async function getPartnerFields(productId: string): Promise<{ partnerName: string | null; partnerUrl: string | null }> {
   try {
@@ -27,4 +29,117 @@ export async function getPartnerFields(productId: string): Promise<{ partnerName
   } catch {
     return { partnerName: null, partnerUrl: null }
   }
+}
+
+// ─── Shop reviews ─────────────────────────────────────────────────────────────
+
+export type ShopReview = {
+  id: string
+  token: string
+  orderId: string
+  orderNumber: string
+  email: string
+  name: string | null
+  rating: number | null
+  comment: string | null
+  isApproved: number
+  submittedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+function rowToReview(row: Record<string, unknown>): ShopReview {
+  return {
+    id: row.id as string,
+    token: row.token as string,
+    orderId: row.orderId as string,
+    orderNumber: row.orderNumber as string,
+    email: row.email as string,
+    name: (row.name as string | null) ?? null,
+    rating: (row.rating as number | null) ?? null,
+    comment: (row.comment as string | null) ?? null,
+    isApproved: row.isApproved as number,
+    submittedAt: (row.submittedAt as string | null) ?? null,
+    createdAt: row.createdAt as string,
+    updatedAt: row.updatedAt as string,
+  }
+}
+
+export async function createShopReview(data: {
+  id: string
+  token: string
+  orderId: string
+  orderNumber: string
+  email: string
+}) {
+  const db = getDb()
+  await db.execute({
+    sql: `INSERT OR IGNORE INTO shop_reviews (id, token, orderId, orderNumber, email, createdAt, updatedAt)
+          VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+    args: [data.id, data.token, data.orderId, data.orderNumber, data.email],
+  })
+}
+
+export async function getShopReviewByToken(token: string): Promise<ShopReview | null> {
+  try {
+    const db = getDb()
+    const result = await db.execute({
+      sql: `SELECT * FROM shop_reviews WHERE token = ?`,
+      args: [token],
+    })
+    if (!result.rows[0]) return null
+    return rowToReview(result.rows[0] as Record<string, unknown>)
+  } catch {
+    return null
+  }
+}
+
+export async function submitShopReview(token: string, data: { name: string; rating: number; comment: string }) {
+  const db = getDb()
+  await db.execute({
+    sql: `UPDATE shop_reviews SET name = ?, rating = ?, comment = ?, submittedAt = datetime('now'), updatedAt = datetime('now') WHERE token = ? AND submittedAt IS NULL`,
+    args: [data.name, data.rating, data.comment, token],
+  })
+}
+
+export async function getApprovedShopReviews(limit = 3): Promise<ShopReview[]> {
+  try {
+    const db = getDb()
+    const result = await db.execute({
+      sql: `SELECT * FROM shop_reviews WHERE isApproved = 1 AND submittedAt IS NOT NULL ORDER BY submittedAt DESC LIMIT ?`,
+      args: [limit],
+    })
+    return result.rows.map((r) => rowToReview(r as Record<string, unknown>))
+  } catch {
+    return []
+  }
+}
+
+export async function getAllSubmittedShopReviews(): Promise<ShopReview[]> {
+  try {
+    const db = getDb()
+    const result = await db.execute({
+      sql: `SELECT * FROM shop_reviews WHERE submittedAt IS NOT NULL ORDER BY submittedAt DESC`,
+      args: [],
+    })
+    return result.rows.map((r) => rowToReview(r as Record<string, unknown>))
+  } catch {
+    return []
+  }
+}
+
+export async function setShopReviewApproval(id: string, approved: boolean) {
+  const db = getDb()
+  await db.execute({
+    sql: `UPDATE shop_reviews SET isApproved = ?, updatedAt = datetime('now') WHERE id = ?`,
+    args: [approved ? 1 : 0, id],
+  })
+}
+
+export async function deleteShopReview(id: string) {
+  const db = getDb()
+  await db.execute({
+    sql: `DELETE FROM shop_reviews WHERE id = ?`,
+    args: [id],
+  })
 }
