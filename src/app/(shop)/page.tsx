@@ -28,7 +28,7 @@ export default async function HomePage() {
     prisma.product.findMany({
       where: { isActive: true },
       include: { images: { orderBy: { sortOrder: "asc" } }, categories: { include: { category: true } } },
-      take: 8,
+      take: 9,
       orderBy: { sortOrder: "asc" },
     }),
     prisma.setting.findUnique({ where: { key: "banner_image" } }),
@@ -86,7 +86,7 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
               {newProducts.map((product, index) => (
-                <div key={product.id} className={index >= 6 ? "hidden sm:block" : ""}>
+                <div key={product.id} className={index >= 8 ? "hidden sm:block" : ""}>
                   <ProductCard product={product} />
                 </div>
               ))}
