@@ -161,7 +161,7 @@ export function HeaderClient({ categories, stripeColor }: Props) {
 
       {/* Menu mobile */}
       {mobileMenuOpen && (
-        <div className="fixed inset-x-0 top-0 z-40 bg-[var(--cream)] border-b border-[var(--beige-dark)] pt-20">
+        <div className="fixed inset-x-0 top-0 z-40 bg-[var(--cream)] border-b border-[var(--beige-dark)] pt-36">
           <nav className="px-6 py-4 flex flex-col">
             {navLinks.map((link) => (
               <Link
