@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import { setShopReviewApproval, deleteShopReview } from "@/lib/db-raw"
 
@@ -13,6 +14,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params
   const { isApproved } = await req.json()
   await setShopReviewApproval(id, Boolean(isApproved))
+  // Les avis approuvés s'affichent sur la page d'accueil (statique)
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }
 
@@ -20,5 +23,6 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   if (!await requireAdmin()) return NextResponse.json({ error: "Non autorisé" }, { status: 403 })
   const { id } = await params
   await deleteShopReview(id)
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }
