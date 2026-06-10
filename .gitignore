@@ -52,3 +52,9 @@ dev.db
 # bmad
 _bmad/
 _bmad-output/
+
+# tests e2e
+/test.db
+/test.db-journal
+/test-results/
+/playwright-report/
