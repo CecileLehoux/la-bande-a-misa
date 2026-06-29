@@ -29,37 +29,44 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     },
   })
 
-  if (status === "SHIPPED") {
-    sendOrderShippedEmail({
-      to: order.email,
-      orderNumber: order.orderNumber,
-      trackingNumber: trackingNumber ?? order.trackingNumber,
-    }).catch((err) => console.error("Erreur email expédition:", err))
-  } else if (status === "CANCELLED") {
-    sendOrderCancelledEmail({
-      to: order.email,
-      orderNumber: order.orderNumber,
-    }).catch((err) => console.error("Erreur email annulation:", err))
-  } else if (status === "DELIVERED") {
-    // Create a unique review token and save the review request
-    const token = crypto.randomUUID()
-    const reviewId = crypto.randomUUID()
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://labandeamisa.fr"
-    const reviewUrl = `${appUrl}/avis/${token}`
+  // Effets de bord email/avis — awaités pour ne pas être coupés par la fin
+  // de la fonction serverless sur Vercel, mais isolés pour ne jamais bloquer
+  // la mise à jour du statut.
+  try {
+    if (status === "SHIPPED") {
+      await sendOrderShippedEmail({
+        to: order.email,
+        orderNumber: order.orderNumber,
+        trackingNumber: trackingNumber ?? order.trackingNumber,
+      })
+    } else if (status === "CANCELLED") {
+      await sendOrderCancelledEmail({
+        to: order.email,
+        orderNumber: order.orderNumber,
+      })
+    } else if (status === "DELIVERED") {
+      // Crée un token d'avis unique et enregistre la demande d'avis
+      const token = crypto.randomUUID()
+      const reviewId = crypto.randomUUID()
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://labandeamisa.fr"
+      const reviewUrl = `${appUrl}/avis/${token}`
 
-    createShopReview({
-      id: reviewId,
-      token,
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      email: order.email,
-    }).catch((err) => console.error("Erreur création review:", err))
+      await createShopReview({
+        id: reviewId,
+        token,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        email: order.email,
+      })
 
-    sendOrderDeliveredEmail({
-      to: order.email,
-      orderNumber: order.orderNumber,
-      reviewUrl,
-    }).catch((err) => console.error("Erreur email livraison:", err))
+      await sendOrderDeliveredEmail({
+        to: order.email,
+        orderNumber: order.orderNumber,
+        reviewUrl,
+      })
+    }
+  } catch (err) {
+    console.error(`Erreur effet de bord (statut ${status}):`, err)
   }
 
   return NextResponse.json(order)
