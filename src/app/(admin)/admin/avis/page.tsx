@@ -1,20 +1,25 @@
 import { getAllSubmittedShopReviews } from "@/lib/db-raw"
 import { ReviewActions } from "./review-actions"
+import { ShareLink } from "./share-link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Avis clients - Admin" }
 
 export default async function ReviewsPage() {
   const reviews = await getAllSubmittedShopReviews()
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://www.labandeamisa.fr")
+  const publicReviewUrl = `${appUrl}/avis`
 
   return (
     <div className="p-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Avis clients</h1>
         <p className="text-sm text-gray-500 mt-1">
           {reviews.length} avis reçu{reviews.length > 1 ? "s" : ""} — les avis approuvés apparaissent sur la page d&apos;accueil.
         </p>
       </div>
+
+      <ShareLink url={publicReviewUrl} />
 
       {reviews.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">

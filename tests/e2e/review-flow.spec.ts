@@ -64,4 +64,31 @@ test.describe("Flux de demande d'avis", () => {
       expect(res.rows[0].submittedAt).toBeNull()
     }).toPass({ timeout: 10_000 })
   })
+
+  test("le lien public /avis permet de déposer un avis spontané", async ({ page }) => {
+    await page.goto("/avis")
+    await expect(page.getByRole("heading", { name: /Votre avis compte/ })).toBeVisible()
+
+    // 4 étoiles + prénom + commentaire
+    await page.getByRole("button", { name: "4 étoiles" }).click()
+    await page.locator('input[type="text"]').fill("Camille Spontanée")
+    await page.locator("textarea").fill("Découvert sur Instagram, j'adore !")
+    await page.getByRole("button", { name: "Envoyer mon avis" }).click()
+
+    await expect(page.getByText(/Merci Camille Spontanée/)).toBeVisible()
+
+    // Présent en base : soumis, non approuvé, marqué "Avis spontané"
+    await expect(async () => {
+      const db = testDb()
+      const res = await db.execute({
+        sql: "SELECT rating, comment, isApproved, submittedAt, orderNumber FROM shop_reviews WHERE name = ?",
+        args: ["Camille Spontanée"],
+      })
+      expect(res.rows.length).toBe(1)
+      expect(Number(res.rows[0].rating)).toBe(4)
+      expect(Number(res.rows[0].isApproved)).toBe(0)
+      expect(res.rows[0].submittedAt).not.toBeNull()
+      expect(res.rows[0].orderNumber).toBe("Avis spontané")
+    }).toPass({ timeout: 10_000 })
+  })
 })

@@ -102,6 +102,27 @@ export async function submitShopReview(token: string, data: { name: string; rati
   })
 }
 
+/**
+ * Avis "spontané" déposé via le lien public /avis (sans commande associée).
+ * On génère des valeurs synthétiques pour les colonnes NOT NULL/UNIQUE afin
+ * de réutiliser la même table et le même flux de modération.
+ */
+export async function createPublicShopReview(data: {
+  id: string
+  token: string
+  name: string
+  rating: number
+  comment: string
+  email?: string
+}) {
+  const db = getDb()
+  await db.execute({
+    sql: `INSERT INTO shop_reviews (id, token, orderId, orderNumber, email, name, rating, comment, isApproved, submittedAt, createdAt, updatedAt)
+          VALUES (?, ?, ?, 'Avis spontané', ?, ?, ?, ?, 0, datetime('now'), datetime('now'), datetime('now'))`,
+    args: [data.id, data.token, `public-${data.id}`, data.email ?? "", data.name, data.rating, data.comment],
+  })
+}
+
 export async function getApprovedShopReviews(limit = 3): Promise<ShopReview[]> {
   try {
     const db = getDb()
