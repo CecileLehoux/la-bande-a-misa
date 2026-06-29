@@ -147,13 +147,15 @@ const TABLES = [
   `CREATE TABLE order_items (
     id TEXT PRIMARY KEY,
     orderId TEXT NOT NULL,
-    productId TEXT NOT NULL,
+    productId TEXT,
     name TEXT NOT NULL,
     image TEXT,
     size TEXT,
     price REAL NOT NULL,
     quantity INTEGER NOT NULL,
-    total REAL NOT NULL
+    total REAL NOT NULL,
+    CONSTRAINT order_items_orderId_fkey FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT order_items_productId_fkey FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL ON UPDATE CASCADE
   )`,
   `CREATE TABLE reviews (
     id TEXT PRIMARY KEY,

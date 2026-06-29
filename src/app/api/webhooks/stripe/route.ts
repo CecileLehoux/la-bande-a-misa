@@ -36,6 +36,7 @@ export async function POST(req: Request) {
 
         // Decrease stock
         for (const item of updated.items) {
+          if (!item.productId) continue
           await tx.product.update({
             where: { id: item.productId },
             data: { stock: { decrement: item.quantity } },

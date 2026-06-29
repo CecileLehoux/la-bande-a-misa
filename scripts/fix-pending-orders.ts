@@ -36,6 +36,7 @@ async function main() {
 
     // Décrémenter le stock
     for (const item of order.items) {
+      if (!item.productId) continue
       await prisma.product.update({
         where: { id: item.productId },
         data: { stock: { decrement: item.quantity } },

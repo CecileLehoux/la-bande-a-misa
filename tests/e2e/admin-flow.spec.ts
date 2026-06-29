@@ -89,6 +89,39 @@ test.describe("Parcours admin", () => {
     expect(response?.status()).toBe(404)
   })
 
+  test("un produit déjà commandé peut être supprimé (historique préservé)", async ({ page }) => {
+    // ── Créer un produit en tant qu'admin ─────────────────────
+    await loginAsAdmin(page)
+    await page.goto("/admin/products/new")
+    await page.locator('input[name="name"]').fill("Produit Commandé E2E")
+    await page.locator('input[name="price"]').fill("30")
+    await page.locator('input[name="stock"]').fill("5")
+    await page.getByRole("button", { name: "Créer le produit" }).click()
+    await page.waitForURL(/\/admin\/products$/)
+
+    // ── Passer une commande sur ce produit (crée un order_item) ─
+    await page.goto("/products/produit-commande-e2e")
+    await page.getByRole("button", { name: "Ajouter au panier" }).click()
+    await page.getByRole("link", { name: "Passer la commande" }).click()
+    await page.getByRole("button", { name: /Retrait à l'atelier/ }).click()
+    await page.locator('input[name="email"]').fill("client-test@exemple.fr")
+    await page.locator('input[name="firstName"]').fill("Claire")
+    await page.locator('input[name="lastName"]').fill("Martin")
+    await page.getByRole("button", { name: /Payer/ }).click()
+    await page.waitForURL(/checkout\/success/)
+
+    // ── Supprimer le produit : doit réussir malgré la commande ─
+    await page.goto("/admin/products")
+    await page
+      .locator("tr", { hasText: "Produit Commandé E2E" })
+      .getByRole("link", { name: "Modifier" })
+      .click()
+    page.on("dialog", (dialog) => dialog.accept())
+    await page.getByRole("button", { name: "Supprimer le produit" }).click()
+    await page.waitForURL(/\/admin\/products$/)
+    await expect(page.locator("tr", { hasText: "Produit Commandé E2E" })).toHaveCount(0)
+  })
+
   test("le produit créé avec un partenaire affiche le lien de collaboration", async ({ page }) => {
     await loginAsAdmin(page)
 

@@ -18,11 +18,12 @@ async function main() {
 
   // Remettre le stock à jour
   for (const item of orderItems) {
+    if (!item.productId) continue
     await prisma.product.update({
       where: { id: item.productId },
       data: { stock: { increment: item.quantity } },
     })
-    console.log(`✅ Stock remis à jour : ${item.product.name} +${item.quantity}`)
+    console.log(`✅ Stock remis à jour : ${item.product?.name ?? item.name} +${item.quantity}`)
   }
 
   // Supprimer les commandes (order_items supprimés en cascade)

@@ -69,14 +69,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requireAdmin()
-  if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 403 })
+  try {
+    const session = await requireAdmin()
+    if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 403 })
 
-  const { id } = await params
-  const product = await prisma.product.findUnique({ where: { id }, select: { slug: true } })
-  await prisma.product.delete({ where: { id } })
-  revalidatePath("/")
-  revalidatePath("/products")
-  if (product) revalidatePath(`/products/${product.slug}`)
-  return NextResponse.json({ success: true })
+    const { id } = await params
+    const product = await prisma.product.findUnique({ where: { id }, select: { slug: true } })
+    if (!product) return NextResponse.json({ error: "Produit introuvable" }, { status: 404 })
+
+    await prisma.product.delete({ where: { id } })
+
+    revalidatePath("/")
+    revalidatePath("/products")
+    revalidatePath(`/products/${product.slug}`)
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error("[DELETE products/[id]]", message)
+    return NextResponse.json({ error: "Impossible de supprimer ce produit." }, { status: 500 })
+  }
 }

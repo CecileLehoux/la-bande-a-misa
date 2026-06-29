@@ -138,12 +138,20 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     if (!confirm("Supprimer ce produit définitivement ?")) return
 
     setDeleting(true)
+    setError("")
     const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" })
     setDeleting(false)
 
     if (res.ok) {
       router.push("/admin/products")
       router.refresh()
+    } else {
+      try {
+        const err = await res.json()
+        setError(err.error ?? "Impossible de supprimer ce produit.")
+      } catch {
+        setError(`Erreur serveur (${res.status})`)
+      }
     }
   }
 
